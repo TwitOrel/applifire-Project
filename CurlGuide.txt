@@ -1,0 +1,17 @@
+הרשמה
+
+curl -X POST http://127.0.0.1:8000/api/login/ \
+     -H "Content-Type: application/json" \
+     -d '{"username": "orel", "password": "1234"}'
+
+
+התחברות
+curl -X POST http://127.0.0.1:8000/api/login/ \
+     -H "Content-Type: application/json" \
+     -d '{"username": "orel", "password": "1234"}'
+
+ברגע זה נקבל TOKEN ונשמור אותו
+
+בדיקת גישה עם הטוקן
+curl -X GET http://127.0.0.1:8000/api/profile/ \
+     -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQxNjMzODQ1LCJpYXQiOjE3NDE1NDc0NDUsImp0aSI6IjkxZmVlYjA3YjE4MzQ5MDhhMjRkYjRhYTZlMzU0OTA3IiwidXNlcl9pZCI6NH0.4oIqguKi6sbI6JLCa9yDkuNEvJByrFgr8HaYEVdxNIs"
