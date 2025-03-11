@@ -18,7 +18,7 @@ function showLogin() {
     document.getElementById('content-area').innerHTML = `
         <form id="login-form">
             <h2>Login</h2>
-            <input type="text" id="username" placeholder="Username or Email" required>
+            <input type="text" id="username" placeholder="Username" required>
             <input type="password" id="password" placeholder="Password" required>
             <button type="submit">Login</button>
             <p id="error-message"></p>
@@ -50,7 +50,6 @@ function showLogin() {
                 localStorage.setItem("refresh", body.refresh); 
                 localStorage.setItem("username", username); 
 
-                // הצגת הודעת התחברות + כפתור התנתקות
                 document.getElementById("content-area").innerHTML = `
                     <div style="text-align: center;">
                         <h2 class="success-message">✅ ההתחברות בוצעה בהצלחה!</h2>
@@ -58,7 +57,6 @@ function showLogin() {
                     </div>
                 `;
 
-                // הוספת מאזין לכפתור ההתנתקות
                 document.getElementById("logout-button").addEventListener("click", logout);
             } else {
                 document.getElementById("error-message").innerText = body.error || "Invalid credentials.";
