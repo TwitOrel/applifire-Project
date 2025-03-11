@@ -52,12 +52,11 @@ def register_user(request):
 
     pending_user = PendingUser.objects.create(username=username, email=email, password=password)
     
-    # יצירת לינק אימות
     verification_link = request.build_absolute_uri(
         reverse('verify-email', args=[str(pending_user.token)])
     )
 
-    subject = "Confirm your registration - Todo List"
+    subject = "Confirm your registration - Applifire"
     message = f"""
     Hi {username},
 
@@ -67,7 +66,7 @@ def register_user(request):
     If you didn't sign up, ignore this email.
 
     Thanks,
-    The Todo List Team
+    The Applifire Team
     """
 
     send_mail(
@@ -95,7 +94,7 @@ def verify_email(request, token):
 
         return HttpResponse("""
             <script>
-                alert("✅ נרשמת בהצלחה!");
+                alert("Registration successful, wellcome! ✅");
                 window.location.href = "/";
             </script>
         """)
@@ -103,23 +102,12 @@ def verify_email(request, token):
     except PendingUser.DoesNotExist:
         return HttpResponse("""
             <script>
-                alert("❌ קישור לא תקף או שפג תוקפו.");
+                alert(" Invalid or expired link. ❌");
                 window.location.href = "/";
             </script>
         """)
 
-def send_test_email(request):
-    subject = "מייל בדיקה מ-Django"
-    message = "היי, זה מייל שנשלח מ-Django כדי לוודא שהכל עובד!"
-    from_email = os.getenv("EMAIL.HOST_USER")
-    recipient_list = ["oreltwito3@gmail.com"]  # שלח לעצמך
-
-    send_mail(subject, message, from_email, recipient_list)
-    return HttpResponse("מייל נשלח בהצלחה!")
-
-
 @api_view(['POST'])
-# @permission_classes([AllowAny])
 def reset_password_confirm(request, uidb64, token):
     try:
         uid = urlsafe_base64_decode(uidb64).decode()
@@ -130,7 +118,6 @@ def reset_password_confirm(request, uidb64, token):
     if not default_token_generator.check_token(user, token):
         return Response({'error': 'Invalid or expired reset link'}, status=400)
 
-    # שינוי הסיסמה
     new_password = request.data.get('password')
     if not new_password:
         return Response({'error': 'Password is required'}, status=400)
@@ -141,7 +128,6 @@ def reset_password_confirm(request, uidb64, token):
     return Response({'message': 'Password successfully reset'})
 
 @api_view(['POST'])
-# @permission_classes([AllowAny])
 def reset_password_request(request):
     email = request.data.get('email')
 
@@ -150,20 +136,18 @@ def reset_password_request(request):
     except User.DoesNotExist:
         return Response({'error': 'User with this email does not exist'}, status=400)
 
-    # יצירת לינק לאיפוס סיסמה
+    # create link for reset password
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = default_token_generator.make_token(user)
-    # בניית הלינק החדש - שולח לדף login עם פרמטרים ב-URL
     reset_link = request.build_absolute_uri(
         '/' + f'?reset=1&uidb64={uid}&token={token}'
     )
 
-    # print(f"\n🔗 Password Reset Link: {reset_link}\n") # can print the link to terminal if mail doesnt working
-    subject = 'Reset Your Password - Todo List'
+    subject = 'Reset Your Password - Applifire'
     message = f"""
     Hi {user.username},
 
-    We received a request to reset your password for your Todo List account.
+    We received a request to reset your password for your Applifire account.
 
     Click the link below to reset your password:
     {reset_link}
@@ -171,13 +155,13 @@ def reset_password_request(request):
     If you didn't request this, please ignore this email.
 
     Thanks,
-    The Todo List Team
+    The Applifire Team
     """
 
     send_mail(
         subject,
         message,
-        from_email=os.getenv('EMAIL_HOST_USER'),
+        from_email=settings.EMAIL_HOST_USER,
         recipient_list=[email],
         fail_silently=False,
     )
@@ -187,27 +171,6 @@ def reset_password_request(request):
 
 def home(request):
     return render(request, 'index.html')
-
-# @api_view(['POST'])
-# def register_user(request):
-    username = request.data.get("username")
-    password = request.data.get("password")
-    email = request.data.get("email")
-
-    if not username or not password:
-        return Response({'error': 'Missing required fields'}, status=status.HTTP_400_BAD_REQUEST)
-
-    if User.objects.filter(username=username).exists():
-        return Response({'error': 'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    if User.objects.filter(email=email).exists():
-        return Response({'error': 'Email already registered'}, status=status.HTTP_400_BAD_REQUEST)
-
-    try:
-        user = User.objects.create_user(username=username, email=email, password=password)
-        return Response({'message': 'User registered successfully'})
-    except Exception as e:
-        return Response({'error': str(e)}, status=500)
 
 @api_view(['POST'])
 def login_user(request):
@@ -219,12 +182,12 @@ def login_user(request):
         refresh = RefreshToken.for_user(user)
 
         return Response({
-            "message": "התחברת בהצלחה!",
+            "message": "Successfully logged in!",   
             "refresh": str(refresh),
             "access": str(refresh.access_token),
         })
 
-    return Response({"error": "שם משתמש או סיסמה שגויים"}, status=status.HTTP_400_BAD_REQUEST)
+    return Response({"error": "Invalid username or password"}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

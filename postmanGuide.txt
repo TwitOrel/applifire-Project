@@ -19,10 +19,10 @@ http://127.0.0.1:8000/api/login/
   "password": "1121"
 }
 # OUTPUT:
-    {
-    "message": "התחברת בהצלחה!",
-    "refresh": "refresh_token",
-    "access": "access_token"
+{
+  "message": "התחברת בהצלחה!",
+  "refresh": "refresh_token",
+  "access": "access_token"
 }
 
 בדיקת פרופיל
