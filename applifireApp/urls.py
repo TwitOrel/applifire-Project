@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import register_user, login_user, user_profile, reset_password_request, reset_password_confirm, verify_email
+from.views import google_login_success
 
 urlpatterns = [
     path('register/', register_user, name='register'),
@@ -8,4 +9,7 @@ urlpatterns = [
     path("api/verify-email/<uuid:token>/", verify_email, name="verify-email"),
     path('forgot-password/', reset_password_request, name='reset_password_request'),
     path('reset-password/<uidb64>/<token>/', reset_password_confirm, name='reset_password_confirm'),
+
+    path("google-login-success/", google_login_success, name="google_login_success"),
+
 ]

@@ -10,9 +10,51 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+document.addEventListener("DOMContentLoaded", function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    if (urlParams.has("logged_in")) {
+        localStorage.setItem("google_login_redirect", "true");
+        checkGoogleLogin();
+        history.replaceState({}, document.title, "/");  // מסיר את `?logged_in=true` מה-URL
+    }
+});
+
+
 function goToHome() {
     window.location.href = '/';
 }
+
+function handleGoogleLoginSuccess(access, refresh, username) {
+    localStorage.setItem("access", access);
+    localStorage.setItem("refresh", refresh);
+    localStorage.setItem("username", username);
+    localStorage.setItem("google_login", "true");   // used for when logout (know if normal or by Google)
+
+    const logoutUrl = document.getElementById("logout-url").getAttribute("data-url");
+
+    document.getElementById("content-area").innerHTML = `
+        <div style="text-align: center;">
+            <h2 class="success-message">✅ שלום ${username}, ההתחברות בוצעה בהצלחה!</h2>
+            <button id="logout-button" class="logout-button">Logout</button>
+        </div>
+    `;
+    document.getElementById("logout-button").addEventListener("click", logout);
+}
+
+
+function checkGoogleLogin() {
+    fetch("/api/google-login-success/")
+    .then(response => response.json())
+    .then(data => {
+        if (data.access) {
+            handleGoogleLoginSuccess(data.access, data.refresh, data.username);
+        }
+    })
+    .catch(error => console.error("Google Login Error:", error));
+}
+
+
 
 function showLogin() {
     document.getElementById('content-area').innerHTML = `
@@ -52,8 +94,8 @@ function showLogin() {
 
                 document.getElementById("content-area").innerHTML = `
                     <div style="text-align: center;">
-                        <h2 class="success-message">✅ ההתחברות בוצעה בהצלחה!</h2>
-                        <button id="logout-button" class="logout-button">התנתקות</button>
+                        <h2 class="success-message">✅ שלום ${username}, ההתחברות בוצעה בהצלחה!</h2>
+                        <button id="logout-button" class="logout-button">Logout</button>
                     </div>
                 `;
 
@@ -69,12 +111,47 @@ function showLogin() {
     });
 }
 
-function logout() {
-    localStorage.removeItem("access");
-    localStorage.removeItem("refresh");
-    localStorage.removeItem("username");
-    showLogin();
+function getCSRFToken() {
+    const cookies = document.cookie.split("; ");
+    for (let i = 0; i < cookies.length; i++) {
+        const [name, value] = cookies[i].split("=");
+        if (name === "csrftoken") {
+            return value;
+        }
+    }
+    return "";
 }
+
+function logout() {
+    const isGoogleLogin = localStorage.getItem("google_login") === "true";
+
+    if (isGoogleLogin) {
+        console.log("🚨 Logging out from Google...");
+        fetch("/accounts/logout/", { 
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken()  // 🔹 מוסיף את ה-CSRF Token מהעוגיות
+            },
+            credentials: "include"
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log("✅ Google Logout Successful!");
+                localStorage.clear(); 
+                window.location.href = "/";
+            } else {
+                console.error("🚨 Google Logout Failed!");
+            }
+        })
+        .catch(error => console.error("🚨 Error during Google Logout:", error));
+
+    } else {
+        localStorage.clear();
+        showLogin();
+    }
+}
+
 
 function showRegister() {
     document.getElementById('content-area').innerHTML = `
