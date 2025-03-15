@@ -66,6 +66,19 @@ INSTALLED_APPS = [
 ]
 
 # Django OAuth
+# SITE_URL = "https://f65c-109-186-49-243.ngrok-free.app/"     # path ngrok gave after load
+# ngrok
+ALLOWED_HOSTS = [
+    "f65c-109-186-49-243.ngrok-free.app",
+    "127.0.0.1",
+    "localhost"
+]
+# ngrok
+CSRF_TRUSTED_ORIGINS = [
+    "https://f65c-109-186-49-243.ngrok-free.app"
+]
+
+
 SITE_ID = 1
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',

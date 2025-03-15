@@ -131,7 +131,7 @@ function logout() {
             method: "POST",
             headers: { 
                 "Content-Type": "application/json",
-                "X-CSRFToken": getCSRFToken()  // 🔹 מוסיף את ה-CSRF Token מהעוגיות
+                "X-CSRFToken": getCSRFToken()  // add the CSRF Token from the Coockies
             },
             credentials: "include"
         })
