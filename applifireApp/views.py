@@ -22,7 +22,19 @@ from django.conf import settings
 from django.shortcuts import redirect
 from django.db import models
 import uuid
+from allauth.socialaccount.models import SocialAccount
 
+
+def google_login_success(request):
+    if request.user.is_authenticated:
+        refresh = RefreshToken.for_user(request.user)
+        return JsonResponse({
+            "access": str(refresh.access_token),
+            "refresh": str(refresh),
+            "username": request.user.username
+        })
+    else:
+        return JsonResponse({"error": "Authentication failed"}, status=400)
 
 
 class PendingUser(models.Model):

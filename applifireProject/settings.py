@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-cj!guk)^xm@sqy7sgrte*=-%ky*^*e_@v=n)05h(wi4)+18$u@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -45,16 +45,73 @@ SIMPLE_JWT = {
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # my app
     'applifireApp',
+    # rest frame work
     'rest_framework',
     'rest_framework_simplejwt',
+    # Django Allauth
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
+
+# Django OAuth
+# SITE_URL = "https://f65c-109-186-49-243.ngrok-free.app/"     # path ngrok gave after load
+# ngrok
+ALLOWED_HOSTS = [
+    "f65c-109-186-49-243.ngrok-free.app",
+    "127.0.0.1",
+    "localhost"
+]
+# ngrok
+CSRF_TRUSTED_ORIGINS = [
+    "https://f65c-109-186-49-243.ngrok-free.app"
+]
+
+
+SITE_ID = 1
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': os.getenv("GOOGLE_CLIENT_ID"),
+            'secret': os.getenv("GOOGLE_CLIENT_SECRET"),
+            'key': '',
+        }
+    }
+}
+
+LOGIN_REDIRECT_URL = '/?logged_in=true'
+LOGOUT_REDIRECT_URL = '/'
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -64,6 +121,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'applifireProject.urls'
