@@ -22,8 +22,107 @@ from django.conf import settings
 from django.shortcuts import redirect
 from django.db import models
 import uuid
+from applifireApp.models import UserProfile
 from allauth.socialaccount.models import SocialAccount
+from .serializers import UserProfileSerializer
+import secrets
 
+# working on adding fields to the users
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_account(request):
+    user = request.user
+    password = request.data.get("password")
+
+    # for user who has no password (like login with google)
+    if not user.has_usable_password():
+        user.delete()
+        return Response({"message": f"User '{user.username}' deleted (OAuth User)"}, status=status.HTTP_204_NO_CONTENT)
+
+    # 
+    if not password:
+        return Response({"error": "You must enter your password."}, status=status.HTTP_400_BAD_REQUEST)
+
+    if not user.check_password(password):
+        return Response({"error": "Invalid password."}, status=status.HTTP_401_UNAUTHORIZED)
+
+    user.delete()
+    return Response({"message": f"The user '{user.username}' was deleted successfully!"}, status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+    user = request.user
+    current_password = request.data.get("current_password")
+    new_password = request.data.get("new_password")
+
+    # Check if the user has a usable (real) password
+    if user.has_usable_password():
+        # Require current password from regular users
+        if not current_password:
+            return Response({"error": "Current password is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not user.check_password(current_password):
+            return Response({"error": "Current password is incorrect."}, status=status.HTTP_400_BAD_REQUEST)
+
+    else:
+        # Google login users shouldn't provide current password
+        if current_password:
+            return Response({"error": "This account uses Google login. You can only set a new password."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Set the new password
+    user.set_password(new_password)
+    user.save()
+
+    return Response({"message": "✅ Password changed successfully!"})
+
+
+
+@api_view(['GET', 'POST', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def api_key_view(request):
+    profile, _ = UserProfile.objects.get_or_create(user=request.user)
+
+    if request.method == 'GET':
+        return Response({"api_key": profile.api_key})
+
+    elif request.method == 'POST':
+        profile.generate_new_api_key()
+        return Response({"api_key": profile.api_key}, status=status.HTTP_201_CREATED)
+
+    elif request.method == 'DELETE':
+        profile.api_key = None
+        profile.save()
+        return Response({"message": "API Key deleted."}, status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['GET', 'PUT'])
+@permission_classes([IsAuthenticated])
+def user_profile_view(request):
+    profile, _ = UserProfile.objects.get_or_create(user=request.user)
+
+    if request.method == 'GET':
+        serializer = UserProfileSerializer(profile)
+        return Response({
+            "username": request.user.username,
+            "email": request.user.email,
+            "phone": serializer.data.get("phone"),
+            "address": serializer.data.get("address"),
+            "api-key": serializer.data.get("api_key")
+        })
+
+    elif request.method == 'PUT':
+        serializer = UserProfileSerializer(profile, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                "username": request.user.username,
+                "email": request.user.email,
+                "phone": serializer.data.get("phone"),
+                "address": serializer.data.get("address"), 
+                "api-key": serializer.data.get("api_key")  
+            })
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+# end./
 
 def google_login_success(request):
     if request.user.is_authenticated:
@@ -36,13 +135,11 @@ def google_login_success(request):
     else:
         return JsonResponse({"error": "Authentication failed"}, status=400)
 
-
 class PendingUser(models.Model):
     token = models.UUIDField(default=uuid.uuid4, unique=True)
     username = models.CharField(max_length=150)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=150)
-
 
 @api_view(['POST'])
 def register_user(request):
@@ -141,10 +238,11 @@ def reset_password_confirm(request, uidb64, token):
 
 @api_view(['POST'])
 def reset_password_request(request):
+    username = request.data.get("username")
     email = request.data.get('email')
 
     try:
-        user = User.objects.get(email=email)
+        user = User.objects.get(username=username, email=email)
     except User.DoesNotExist:
         return Response({'error': 'User with this email does not exist'}, status=400)
 
@@ -193,10 +291,17 @@ def login_user(request):
     if user:
         refresh = RefreshToken.for_user(user)
 
+        # TODO test
+        profile, created = UserProfile.objects.get_or_create(user=user)
+        phone = profile.phone if profile.phone else "לא הוזן"
+        print("📞 PHONE FROM PROFILE:", profile.phone)
+
+
         return Response({
             "message": "Successfully logged in!",   
             "refresh": str(refresh),
             "access": str(refresh.access_token),
+            "phone": phone
         })
 
     return Response({"error": "Invalid username or password"}, status=status.HTTP_400_BAD_REQUEST)
