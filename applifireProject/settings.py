@@ -55,6 +55,7 @@ INSTALLED_APPS = [
 
     # my app
     'applifireApp',
+    'devices',
     # rest frame work
     'rest_framework',
     'rest_framework_simplejwt',

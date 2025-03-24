@@ -76,8 +76,6 @@ def change_password(request):
 
     return Response({"message": "✅ Password changed successfully!"})
 
-
-
 @api_view(['GET', 'POST', 'DELETE'])
 @permission_classes([IsAuthenticated])
 def api_key_view(request):

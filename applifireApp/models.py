@@ -17,4 +17,12 @@ class UserProfile(models.Model):
                 break
 
     def __str__(self):
-        return f"{self.user.username}, phone: {self.phone}"
+        parts = [f"Username: {self.user.username}"]
+        if self.phone:
+            parts.append(f"Phone: {self.phone}")
+        if self.address:
+            parts.append(f"Address: {self.address}")
+        if self.api_key:
+            parts.append(f"API Key: {self.api_key[:8]}...")
+        return " | ".join(parts)
+
