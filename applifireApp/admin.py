@@ -3,4 +3,4 @@ from .models import UserProfile
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'phone', 'address', 'api_key']
+    list_display = ['short_guid', 'user', 'phone', 'address', 'api_key']

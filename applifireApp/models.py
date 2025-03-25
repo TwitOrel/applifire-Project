@@ -1,8 +1,11 @@
 import secrets
 from django.db import models
 from django.contrib.auth.models import User
+import uuid
 
 class UserProfile(models.Model):
+    guid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=20, blank=True, null=True)
     address = models.CharField(max_length=255, blank=True, null=True) 
@@ -26,3 +29,6 @@ class UserProfile(models.Model):
             parts.append(f"API Key: {self.api_key[:8]}...")
         return " | ".join(parts)
 
+    def short_guid(self):
+        return str(self.guid)[:8]
+    short_guid.short_description = 'GUID'

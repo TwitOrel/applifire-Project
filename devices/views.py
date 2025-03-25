@@ -2,12 +2,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from applifireApp.authentication import APIKeyAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 from rest_framework import status
 from .models import Device
 from .serializers import DeviceSerializer
 
 class DeviceListCreateView(APIView):
-    authentication_classes = [APIKeyAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -23,7 +25,7 @@ class DeviceListCreateView(APIView):
         return Response(serializer.errors, status=400)
 
 class DeviceDetailView(APIView):
-    authentication_classes = [APIKeyAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request, serial_number):
