@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up - applifire</title>
+  <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <div class="left">
+      <img alt="applifire logo" class="logo" />
+      <ul>
+        <li>⚡ Retrieve data in real-time from cloud services</li>
+        <li>✅ Simple for teams and clients to use</li>
+        <li>🎁 Start for free — no credit card required</li>
+      </ul>
+
+    </div>
+
+    <div class="right">
+      <div class="card">
+        <h2>Create your account</h2>
+        <button class="oauth google">
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" />
+          Sign up with Google
+        </button>
+
+        <div class="divider"><span>Or sign up with email</span></div>
+
+        <form id="signup-form">
+            <input type="text" placeholder="Username*" required />
+            <input type="email" placeholder="Email*" autocomplete="email" required>
+            <input type="password" placeholder="Password*" autocomplete="current-password" required>
+            <button type="submit" class="create-btn">Create account</button>            
+        </form>
+
+        <!-- <p class="terms">By creating an account, you agree to our <a href="#">Terms of Service</a>.</p> -->
+      </div>
+      <div class="login-link">
+        Already have an account? <a href="/login/">Sign in</a>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="{% static 'js/signup.js' %}"></script>
+</body>
+</html>

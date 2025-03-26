@@ -27,7 +27,18 @@ from allauth.socialaccount.models import SocialAccount
 from .serializers import UserProfileSerializer
 import secrets
 
-# working on adding fields to the users
+def home(request):
+    return render(request, 'index.html')
+
+def signup_view(request):
+    return render(request, 'signup.html')
+
+def login_view(request):
+    return redirect('/')
+
+def dashboard_view(request):
+    return render(request, "dashboard.html")
+
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def delete_account(request):
@@ -105,7 +116,8 @@ def user_profile_view(request):
             "email": request.user.email,
             "phone": serializer.data.get("phone"),
             "address": serializer.data.get("address"),
-            "api-key": serializer.data.get("api_key")
+            "api-key": serializer.data.get("api_key"),
+            "guid": serializer.data.get("guid")
         })
 
     elif request.method == 'PUT':
@@ -117,10 +129,11 @@ def user_profile_view(request):
                 "email": request.user.email,
                 "phone": serializer.data.get("phone"),
                 "address": serializer.data.get("address"), 
-                "api-key": serializer.data.get("api_key")  
+                "api-key": serializer.data.get("api_key"),
+                "guid": serializer.data.get("guid")  
             })
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-# end./
+
 
 def google_login_success(request):
     if request.user.is_authenticated:
@@ -275,10 +288,6 @@ def reset_password_request(request):
     )
 
     return Response({'message': 'Password reset link generated (check email)'})
-
-
-def home(request):
-    return render(request, 'index.html')
 
 @api_view(['POST'])
 def login_user(request):

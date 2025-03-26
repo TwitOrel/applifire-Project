@@ -1,38 +1,56 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
-from applifireApp.authentication import APIKeyAuthentication
-from rest_framework_simplejwt.authentication import JWTAuthentication
+from django.shortcuts import get_object_or_404
 
-from rest_framework import status
 from .models import Device
 from .serializers import DeviceSerializer
 
-class DeviceListCreateView(APIView):
-    authentication_classes = [JWTAuthentication]
+# יצירת מכשיר חדש
+class DeviceCreateView(generics.CreateAPIView):
+    queryset = Device.objects.all()
+    serializer_class = DeviceSerializer
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        devices = Device.objects.filter(user=request.user)
-        serializer = DeviceSerializer(devices, many=True)
-        return Response(serializer.data)
+    def perform_create(self, serializer):
+        print(self.request.user)
+        serializer.save(user=self.request.user)
 
-    def post(self, request):
-        serializer = DeviceSerializer(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            serializer.save(user=request.user)
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
-
-class DeviceDetailView(APIView):
-    authentication_classes = [JWTAuthentication]
+# הצגת רשימת מכשירים של המשתמש
+class DeviceListView(generics.ListAPIView):
+    serializer_class = DeviceSerializer
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, serial_number):
-        try:
-            device = Device.objects.get(user=request.user, serial_number=serial_number)
-        except Device.DoesNotExist:
-            return Response({"error": "Device not found"}, status=status.HTTP_404_NOT_FOUND)
+    def get_queryset(self):
+        # מחזיר את המכשירים של המשתמש המחובר
+        return Device.objects.filter(user=self.request.user)
 
-        serializer = DeviceSerializer(device)
-        return Response(serializer.data)
+# הצגת מכשיר ספציפי
+class DeviceDetailView(generics.RetrieveAPIView):
+    queryset = Device.objects.all()
+    serializer_class = DeviceSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        # מחפשים מכשיר לפי serial_number ולא guid
+        return get_object_or_404(Device, serial_number=self.kwargs['serial_number'], user=self.request.user)
+
+
+# עדכון מכשיר
+class DeviceUpdateView(generics.UpdateAPIView):
+    queryset = Device.objects.all()
+    serializer_class = DeviceSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        # מחפשים מכשיר לפי serial_number ולא guid
+        return get_object_or_404(Device, serial_number=self.kwargs['serial_number'], user=self.request.user)
+
+# מחיקת מכשיר
+class DeviceDeleteView(generics.DestroyAPIView):
+    queryset = Device.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        # מחפשים מכשיר לפי serial_number ולא guid
+        return get_object_or_404(Device, serial_number=self.kwargs['serial_number'], user=self.request.user)
+

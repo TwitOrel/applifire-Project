@@ -3,25 +3,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Applifire</title>
-    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign In to Applifire</title>
+  <link rel="stylesheet" href="{% static 'css/index.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="top-bar">
-        <div class="page-title">Applifire</div>
-        <div class="right-buttons">
-            <button class="nav-button" onclick="window.location.href='{% provider_login_url 'google' %}'">Login with Google</button>
-            <button class="nav-button" onclick="showLogin()">Login</button>
-            <button class="nav-button" onclick="showRegister()">Register</button>
-            <button class="nav-button" onclick="showForgotPassword()">Forgot Password?</button>
-        </div>
-    </div>
+  <div class="container">
+    <h1>Applifire</h1>
+    <div class="card">
+      <h2>Sign in</h2>
+      <form id="login-form">
+        <label>Username</label>
+        <input type="text" name="username" autocomplete="username" placeholder="example" required>
 
-    <div class="content-area" id="content-area"></div>
-    <p id="details-message"></p>
-    <span id="logout-url" data-url="{% url 'account_logout' %}"></span>
-    <script src="{% static 'js/index.js' %}"></script>
+        <label>Password</label>
+        <input type="password" name="password" placeholder="Enter your password" autocomplete="current-password" required>
+
+
+        <div class="remember">
+          <label><input type="checkbox" /> Remember me</label>
+          <a href="#">Forgot your password?</a>
+        </div>
+
+        <button type="submit" class="primary-btn">Sign In</button>
+
+        <div class="divider"><span>OR</span></div>
+
+        <button type="button" class="google-btn">
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" />
+          Sign in with Google
+        </button>
+
+        <div class="signup-link">
+          Don’t have an account? <a href="signup">Sign up now</a>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script src="{% static 'js/index.js' %}"></script>
+
 </body>
 </html>

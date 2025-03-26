@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Applifire Dashboard</title>
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="dashboard">
+    <aside class="sidebar">
+      <div class="logo">Applifire</div>
+      <nav>
+        <ul>
+          <li class="active">Devices</li>
+          <li>Dashboards</li>
+          <li>Data Feeds</li>
+          <li>Explorer</li>
+        </ul>
+      </nav>
+      <div class="user-menu">
+        <div class="user-trigger" id="userTrigger">
+          <div class="user-icon">אט</div>
+          <span class="user-name">אוראל</span>
+          <span class="arrow">▾</span>
+        </div>
+      
+        <div class="user-dropdown" id="userDropdown">
+          <a href="/profile/">Account</a>
+          <a href="#" id="logoutBtn">Logout</a>
+        </div>
+      </div>
+      
+    </aside>
+
+    <main class="main-content">
+      <header class="header">
+        <h1>Your Devices</h1>
+        <div class="range">Last updated: <span id="last-updated">–</span></div>
+      </header>
+
+      <section class="devices-table">
+        <div id="device-view">
+          <div id="devices-list">
+            <!-- Headers + rows will be injected via JS -->
+          </div>
+        </div>
+      </section>
+      
+      
+    </main>
+  </div>
+
+  <script src="{% static 'js/dashboard.js' %}"></script>
+</body>
+</html>

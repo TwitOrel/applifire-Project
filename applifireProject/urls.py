@@ -16,12 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from applifireApp.views import home
+from applifireApp.views import home  # אם אתה מציג דף בית פשוט
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", home, name="home"),
-    path("api/", include("applifireApp.urls")),
-    path('api/', include('devices.urls')),
-    path('accounts/', include('allauth.urls')),
+    path('', home, name='home'),  # דף הבית
+    path('', include('applifireApp.urls')),  # כולל את כל שאר הנתיבים
+    path('api/', include('devices.urls')),   # מכשירים
+    path('accounts/', include('allauth.urls')),  # התחברות עם גוגל
 ]
