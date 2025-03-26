@@ -22,10 +22,11 @@
       </nav>
       <div class="user-menu">
         <div class="user-trigger" id="userTrigger">
-          <div class="user-icon">אט</div>
-          <span class="user-name">אוראל</span>
-          <span class="arrow">▾</span>
-        </div>
+            <div class="user-icon" id="userInitial">?</div>
+            <span class="user-name" id="usernameDisplay">Loading...</span>
+            <span class="arrow">▾</span>
+          </div>
+          
       
         <div class="user-dropdown" id="userDropdown">
           <a href="/profile/">Account</a>
@@ -36,21 +37,46 @@
     </aside>
 
     <main class="main-content">
-      <header class="header">
-        <h1>Your Devices</h1>
-        <div class="range">Last updated: <span id="last-updated">–</span></div>
-      </header>
+        
+        <div id="devices-section">
+            <header class="header">
+              <h1>Your Devices</h1>
+              <button id="add-device-btn" class="primary-btn">Add Device +</button>
+            </header>
+          
+            <section class="devices-table">
+              <div id="device-view">
+                <div id="devices-list">
+                  <!-- Headers + rows will be injected via JS -->
+                </div>
+              </div>
+            </section>
+          </div>
 
-      <section class="devices-table">
-        <div id="device-view">
-          <div id="devices-list">
-            <!-- Headers + rows will be injected via JS -->
+          <div id="profile-section" class="hidden"></div>
+    
+    </main>
+    <div id="add-device-modal" class="modal hidden">
+        <div class="modal-content">
+          <h3>Add New Device</h3>
+          <label>Serial Number:</label>
+          <input type="text" id="new-serial-number" />
+    
+          <label>Model:</label>
+          <input type="text" id="new-model" />
+    
+          <label>Software Version:</label>
+          <input type="text" id="new-software-version" />
+
+          <div id="add-error-message" class="error-message hidden"></div>
+    
+          <div class="modal-buttons">
+            <button class="primary-btn" id="submit-add-device">Add Device</button>
+            <button class="cancel-btn" id="cancel-add-device">Cancel</button>
           </div>
         </div>
-      </section>
-      
-      
-    </main>
+      </div>
+      <div id="overlay" class="overlay hidden"></div>
   </div>
 
   <script src="{% static 'js/dashboard.js' %}"></script>

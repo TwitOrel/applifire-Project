@@ -11,7 +11,19 @@ class DeviceSerializer(serializers.ModelSerializer):
 
     def get_user(self, obj):
         return obj.user.username 
-
+    
+    def update(self, instance, validated_data):
+        # מניעת שינוי של serial_number ו-guid
+        validated_data.pop('serial_number', None)
+        validated_data.pop('guid', None)
+        validated_data.pop('user', None)
+        
+        # שמירה על השדות הנותרים
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+    
     def validate(self, data):
         user = self.context['request'].user
         serial = data.get('serial_number')
