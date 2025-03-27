@@ -39,6 +39,9 @@ def login_view(request):
 def dashboard_view(request):
     return render(request, "dashboard.html")
 
+def password_reset_view(request):
+    return render(request, "password_reset_form.html")
+
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def delete_account(request):

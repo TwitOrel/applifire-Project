@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import register_user, login_user, user_profile, reset_password_request, reset_password_confirm, verify_email
-from.views import google_login_success, user_profile_view, api_key_view, change_password, delete_account, dashboard_view
+from.views import google_login_success, user_profile_view, api_key_view, change_password, delete_account, dashboard_view, password_reset_view
 from . import views
 
 # 📄 דפי HTML
@@ -8,6 +8,7 @@ urlpatterns = [
     path('signup/', views.signup_view, name='signup'),
     path('login/', views.login_view, name='login'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
+    path('password_reset/', views.password_reset_view, name='password_reset'),
 ]
 
 # 🌐 API נתיבי

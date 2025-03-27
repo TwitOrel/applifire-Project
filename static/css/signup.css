@@ -11,7 +11,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    overflow: hidden; /* חשוב כדי למנוע גלילה מהתמונה */
+    overflow: hidden;
   }
   
   /* רקע התמונה עם שקיפות */
@@ -24,22 +24,26 @@
     height: 100%;
     background: url('../style/signup_backgroundjpg.png') no-repeat center center fixed;
     background-size: cover;
-    opacity: 0.7; /* ⬅️ שליטה בעוצמת התמונה */
+    opacity: 0.7;
     z-index: -1;
   }
   
+  .page-title {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Inter', sans-serif;
+    z-index: 1000;
+  }
   
-  /* body {
-    background: url('../style/signup_backgroundjpg.png') no-repeat center center fixed;
-    background-size: cover;
-    background-attachment: fixed;
-    min-height: 100vh;
+  .page-title h1 {
+    font-size: 3rem;
+    font-weight: 600;
     margin: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  } */
+    color: #000;
+  }
+  
   
   
   .container {
@@ -119,6 +123,25 @@
     margin-bottom: 2rem;
   }
   
+  .oauth img {
+    height: 20px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  .oauth span {
+    font-weight: 600;
+    font-size: 1.05rem;
+  }
+
+  .oauth.google img {
+    height: 28px;
+    width: 28px;
+    padding: 5px;
+    background-color: white;  
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.15); 
+    flex-shrink: 0;
+  }
   
   
   .oauth {
@@ -133,6 +156,8 @@
     justify-content: center;
     gap: 10px;
     cursor: pointer;
+    text-decoration: none; 
+    line-height: 1;  
   }
 
   .oauth:hover {
@@ -147,6 +172,9 @@
     margin-top: 2.5rem;
     font-size: 1.1rem;
     color: #333;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
   }
   
   .login-link a {
@@ -155,6 +183,12 @@
     font-size: 1.05rem;
     text-decoration: none;
   }
+  
+  .signin-line {
+    font-size: 1.1rem;
+  }
+  
+  
   
   
   .google {
@@ -165,10 +199,6 @@
   .xero {
     background: #00b2e2;
     color: white;
-  }
-  
-  .oauth img {
-    height: 20px;
   }
 
   #signup-form {

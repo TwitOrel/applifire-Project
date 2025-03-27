@@ -1,7 +1,6 @@
 
 document.getElementById("login-form").addEventListener("submit", async function (e) {
   e.preventDefault();
-  alert("login called")
   const username = document.querySelector('input[name="username"]').value;
   const password = document.querySelector('input[name="password"]').value;
 

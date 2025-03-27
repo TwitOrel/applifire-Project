@@ -1,7 +1,45 @@
 let existingSerialNumbers = [];
 // ========================
-// Load and render user profile
+// Load, update and render user profile
 // ========================
+let messageTimer = null;
+
+function showMessage(message, isError = false) {
+  const modal = document.getElementById("message-modal");
+  const overlay = document.getElementById("message-overlay");
+  const text = document.getElementById("message-text");
+
+  text.textContent = message;
+
+  modal.classList.remove("hidden", "error", "success");
+  overlay.classList.remove("hidden");
+
+  modal.classList.add(isError ? "error" : "success");
+
+  // נקה טיימר קודם אם קיים
+  if (messageTimer) clearTimeout(messageTimer);
+
+  // סגירה אוטומטית אחרי 3 שניות
+  messageTimer = setTimeout(() => {
+    closeMessageModal();
+  }, 3000);
+}
+
+function closeMessageModal() {
+  const modal = document.getElementById("message-modal");
+  const overlay = document.getElementById("message-overlay");
+
+  modal.classList.add("hidden");
+  overlay.classList.add("hidden");
+
+  // נקה טיימר אם המשתמש לחץ על כפתור
+  if (messageTimer) {
+    clearTimeout(messageTimer);
+    messageTimer = null;
+  }
+}
+
+
 function showUserProfile() {
   const token = localStorage.getItem("access");
 
@@ -20,7 +58,7 @@ function showUserProfile() {
 }
 
 function renderProfile(profile) {
-  const container = document.getElementById("profile-section");
+  const container = document.getElementById("profile-view");
 
   const immutableKeys = ["username", "guid", "email", "api-key"];
 
@@ -51,7 +89,7 @@ function renderProfile(profile) {
     .join("");
 
   container.innerHTML = `
-    <div class="device-details-section">
+    <section class="profile-details-section">
       <h2 class="device-title">Profile Overview</h2>
 
       <div class="immutable-fields">
@@ -64,18 +102,57 @@ function renderProfile(profile) {
 
       <div class="device-actions">
         <div class="left-actions">
-          <button id="back-to-devices-btn">← Back to device list</button>
+          <button id="back-to-devices-btn" class="primary-btn">← Back to device list</button>
+          <button id="update-profile-btn" class="primary-btn">Update Profile</button>
         </div>
       </div>
-    </div>
+    </section>
   `;
 
-  // הצגת פרופיל והסתרת טבלת המכשירים
+  // הסתרת מכשירים והצגת פרופיל
   document.getElementById("devices-section").classList.add("hidden");
-  container.classList.remove("hidden");
+  document.getElementById("profile-section").classList.remove("hidden");
 
+  // אירועים
   document.getElementById("back-to-devices-btn").addEventListener("click", showDevices);
+  document.getElementById("update-profile-btn").addEventListener("click", updateProfile);
 }
+
+
+function updateProfile() {
+  const token = localStorage.getItem("access");
+
+  const editableFields = Array.from(
+    document.querySelectorAll("#profile-view .editable-field")
+  );
+
+  const updatedData = {};
+  editableFields.forEach((input) => {
+    const key = input.id.replace("profile-", "");
+    updatedData[key] = input.value.trim();
+  });
+
+  fetch("/api/profile/", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(updatedData),
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("Failed to update profile");
+      return res.json();
+    })
+    .then(() => {
+      showMessage("Profile updated successfully!");
+    })
+    .catch((err) => {
+      console.error("Error updating profile:", err);
+      showMessage("Failed to update profile.", true);
+    });
+}
+
 
 
 function showDevices() {

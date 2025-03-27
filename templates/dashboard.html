@@ -38,12 +38,13 @@
 
     <main class="main-content">
         
-        <div id="devices-section">
+          <div id="devices-section">
             <header class="header">
               <h1>Your Devices</h1>
               <button id="add-device-btn" class="primary-btn">Add Device +</button>
             </header>
-          
+            
+            <!-- devices section  -->
             <section class="devices-table">
               <div id="device-view">
                 <div id="devices-list">
@@ -52,10 +53,33 @@
               </div>
             </section>
           </div>
+          <!-- profile section  -->
+          <div id="profile-section" class="hidden">
+            <header class="header">
+              <h1>Your Profile</h1>
+            </header>
+          
+            <section class="profile-card">
+              <div id="profile-view"></div>
+            </section>
+          </div>
+          
 
-          <div id="profile-section" class="hidden"></div>
     
     </main>
+    <!-- modal for update profile user  -->
+    <div id="message-modal" class="modal hidden">
+      <div class="modal-content">
+        <p id="message-text"></p>
+        <div class="modal-buttons">
+          <button class="primary-btn" onclick="closeMessageModal()">Close</button>
+        </div>
+      </div>
+    </div>
+    <div id="message-overlay" class="overlay hidden"></div>
+    
+
+    <!-- modal for add device  -->
     <div id="add-device-modal" class="modal hidden">
         <div class="modal-content">
           <h3>Add New Device</h3>
@@ -77,6 +101,7 @@
         </div>
       </div>
       <div id="overlay" class="overlay hidden"></div>
+
   </div>
 
   <script src="{% static 'js/dashboard.js' %}"></script>

@@ -9,6 +9,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
+  <div class="page-title">
+    <h1>Applifire</h1>
+  </div>  
   <div class="container">
     <div class="left">
       <img alt="applifire logo" class="logo" />
@@ -23,26 +26,29 @@
     <div class="right">
       <div class="card">
         <h2>Create your account</h2>
-        <button class="oauth google">
+
+        <a href="/accounts/google/login/" class="oauth google">
           <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" />
           Sign up with Google
-        </button>
-
-        <div class="divider"><span>Or sign up with email</span></div>
-
+        </a>
+        
         <form id="signup-form">
-            <input type="text" placeholder="Username*" required />
-            <input type="email" placeholder="Email*" autocomplete="email" required>
-            <input type="password" placeholder="Password*" autocomplete="current-password" required>
-            <button type="submit" class="create-btn">Create account</button>            
-        </form>
+          <input type="text" id="username" placeholder="Username*" required />
+          <input type="email" id="email" placeholder="Email*" autocomplete="email" required>
+          <input type="password" id="password" placeholder="Password*" autocomplete="current-password" required>
+          <p id="register-error-message" style="color: red;"></p>
+          <button type="submit" class="create-btn">Create account</button>            
+      </form>
 
         <!-- <p class="terms">By creating an account, you agree to our <a href="#">Terms of Service</a>.</p> -->
-      </div>
-      <div class="login-link">
-        Already have an account? <a href="/login/">Sign in</a>
-      </div>
-    </div>
+        <div class="login-link">
+          <div class="signin-line">
+            Already have an account? <a href="/login/">Sign in</a>
+          </div>
+          <div class="forgot-password">
+            <a href="{% url 'password_reset' %}">Forgot your password?</a>
+          </div>          
+        </div>
   </div>
 
 
