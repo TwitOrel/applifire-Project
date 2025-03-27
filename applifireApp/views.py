@@ -2,6 +2,7 @@ import os
 from django.shortcuts import render
 from django.core.mail import send_mail
 from django.http import HttpResponse
+from django.utils.encoding import force_str
 from django.contrib.auth.models import User
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -41,6 +42,10 @@ def dashboard_view(request):
 
 def password_reset_view(request):
     return render(request, "password_reset_form.html")
+
+def reset_password_confirm_page_view(request):
+    return render(request, 'reset_password_confirm.html')
+
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
@@ -231,6 +236,29 @@ def verify_email(request, token):
         """)
 
 @api_view(['POST'])
+def set_new_password(request):
+    uidb64 = request.data.get('uidb64')
+    token = request.data.get('token')
+    password = request.data.get('password')
+
+    if not uidb64 or not token or not password:
+        return Response({'error': 'Missing required data'}, status=400)
+
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (User.DoesNotExist, ValueError, TypeError):
+        return Response({'error': 'Invalid user'}, status=400)
+
+    if not default_token_generator.check_token(user, token):
+        return Response({'error': 'Invalid or expired token'}, status=400)
+
+    user.set_password(password)
+    user.save()
+
+    return Response({'message': 'Password has been reset successfully'})
+
+@api_view(['POST'])
 def reset_password_confirm(request, uidb64, token):
     try:
         uid = urlsafe_base64_decode(uidb64).decode()
@@ -264,7 +292,7 @@ def reset_password_request(request):
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = default_token_generator.make_token(user)
     reset_link = request.build_absolute_uri(
-        '/' + f'?reset=1&uidb64={uid}&token={token}'
+        reverse('reset-password-page') + f'?uidb64={uid}&token={token}'
     )
 
     subject = 'Reset Your Password - Applifire'

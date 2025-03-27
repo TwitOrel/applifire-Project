@@ -1,20 +1,22 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById("reset-password-form");
-    const errorDisplay = document.getElementById("reset-error-message");
+    const form = document.getElementById("forgot-password-form");
+    const errorDisplay = document.getElementById("forgot-error-message");
   
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
+    if (!form) return;
   
-      const username = document.getElementById("reset-username").value.trim();
-      const email = document.getElementById("reset-email").value.trim();
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+  
+      const username = document.getElementById("forgot-username")?.value.trim();
+      const email = document.getElementById("forgot-email")?.value.trim();
   
       errorDisplay.innerText = "";
   
       if (!username || !email) {
-        errorDisplay.innerText = "Please fill in both fields.";
+        errorDisplay.innerText = "Please fill in both username and email.";
         return;
       }
-      console.log(JSON.stringify({ username, email }))
+  
       fetch("/api/forgot-password/", {
         method: "POST",
         headers: {
@@ -22,18 +24,26 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         body: JSON.stringify({ username, email }),
       })
-        .then((res) => res.json())
+        .then((response) => {
+          if (!response.ok) throw new Error("Request failed");
+          return response.json();
+        })
         .then((data) => {
           if (data.message) {
-            alert(data.message);
-            window.location.href = "/login/";
+            alert("Check your email for the reset link!");
+            // נניח שיש לך פונקציה של showLogin
+            if (typeof showLogin === "function") {
+              showLogin();
+            } else {
+              window.location.href = "/login/";
+            }
           } else {
             errorDisplay.innerText = data.error || "Something went wrong.";
           }
         })
-        .catch((err) => {
-          console.error(err);
-          errorDisplay.innerText = "Failed to send reset request.";
+        .catch((error) => {
+          console.error("Error:", error);
+          errorDisplay.innerText = "Failed to process request.";
         });
     });
   });

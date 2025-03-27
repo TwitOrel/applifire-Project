@@ -1,5 +1,9 @@
 let existingSerialNumbers = [];
 // ========================
+// handle with login by google
+// ========================
+
+// ========================
 // Load, update and render user profile
 // ========================
 let messageTimer = null;

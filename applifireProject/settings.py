@@ -108,7 +108,7 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-LOGIN_REDIRECT_URL = '/?logged_in=true'
+LOGIN_REDIRECT_URL = "/?logged_in=true"
 LOGOUT_REDIRECT_URL = '/'
 SOCIALACCOUNT_LOGIN_ON_GET = True
 

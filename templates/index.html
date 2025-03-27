@@ -31,12 +31,15 @@
 
         <div class="divider"><span>OR</span></div>
 
-        <button type="button" class="google-btn">
-          <span class="google-icon-wrapper">
-            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" />
-          </span>
-          Sign in with Google
-        </button>
+        <a href="{% provider_login_url 'google' %}">
+          <button type="button" class="google-btn">
+            <span class="google-icon-wrapper">
+              <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" />
+            </span>
+            Sign in with Google
+          </button>
+        </a>
+        
 
         <div class="signup-link">
           Don’t have an account? <a href="signup">Sign up now</a>

@@ -1,7 +1,8 @@
 from django.urls import path
 from .views import register_user, login_user, user_profile, reset_password_request, reset_password_confirm, verify_email
-from.views import google_login_success, user_profile_view, api_key_view, change_password, delete_account, dashboard_view, password_reset_view
+from .views import google_login_success, user_profile_view, api_key_view, change_password, delete_account, dashboard_view, password_reset_view, reset_password_confirm_page_view
 from . import views
+from .views import set_new_password
 
 # 📄 דפי HTML
 urlpatterns = [
@@ -9,6 +10,8 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('password_reset/', views.password_reset_view, name='password_reset'),
+    path('reset-password/', views.reset_password_confirm_page_view, name='reset-password-page'),
+
 ]
 
 # 🌐 API נתיבי
@@ -23,7 +26,8 @@ urlpatterns += [
     # confirm email after register
     path('api/verify-email/<uuid:token>/', views.verify_email, name='verify-email'),
     path('api/forgot-password/', views.reset_password_request, name='reset_password_request'),
-    path('api/reset-password/<uidb64>/<token>/', views.reset_password_confirm, name='reset_password_confirm'),
+    path('api/set-new-password/', views.set_new_password, name='set-new-password'),
+    ## path('api/reset-password/<uidb64>/<token>/', views.reset_password_confirm, name='reset_password_confirm'),
     # login with google
     path('api/google-login-success/', views.google_login_success, name='google_login_success'),
 ]
