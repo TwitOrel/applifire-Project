@@ -14,7 +14,6 @@
     overflow: hidden;
   }
   
-  /* רקע התמונה עם שקיפות */
   body::before {
     content: "";
     position: fixed;
@@ -112,9 +111,6 @@
     justify-content: flex-start;
   }
   
-  
-  
-  
   .card h2 {
     font-size: 2.4rem;
     font-weight: 700;
@@ -143,8 +139,7 @@
     flex-shrink: 0;
   }
   
-  
-  .oauth {
+.oauth {
     width: 100%;
     padding: 1.2rem;
     font-size: 1.1rem;
@@ -188,9 +183,6 @@
     font-size: 1.1rem;
   }
   
-  
-  
-  
   .google {
     background: #4285F4;
     color: white;
@@ -204,7 +196,6 @@
   #signup-form {
     margin-top: 1.5rem;
   }
-  
   
   .divider {
     text-align: center;
@@ -238,19 +229,19 @@
   
   form input {
     width: 100%;
-    padding: 1.3rem;              /* יותר גובה */
+    padding: 1.3rem;              
     margin-bottom: 1.5rem;
     border: 1px solid #ccc;
     font-size: 1.1rem;
     line-height: 1.5;
     border-radius: 12px;
-    font-size: 1.15rem;            /* טקסט גדול וברור */
+    font-size: 1.15rem;           
     background: #f5faff;
   }
 
   form input::placeholder {
-    font-size: 1.1rem;       /* תואם לגודל הטקסט */
-    color: #999;             /* קצת אפור, אבל עדיין קריא */
+    font-size: 1.1rem;      
+    color: #999;         
     font-weight: 400;
   }
   

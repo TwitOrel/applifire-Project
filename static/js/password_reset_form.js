@@ -31,7 +31,6 @@ document.addEventListener("DOMContentLoaded", function () {
         .then((data) => {
           if (data.message) {
             alert("Check your email for the reset link!");
-            // נניח שיש לך פונקציה של showLogin
             if (typeof showLogin === "function") {
               showLogin();
             } else {

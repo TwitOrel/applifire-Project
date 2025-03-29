@@ -142,6 +142,15 @@ def user_profile_view(request):
             })
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def user_info(request):
+    user = request.user
+    return Response({
+        "username": user.username,
+        "email": user.email,
+        "id": user.id
+    })
 
 def google_login_success(request):
     if request.user.is_authenticated:

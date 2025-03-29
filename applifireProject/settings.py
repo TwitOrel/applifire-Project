@@ -74,11 +74,6 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost"
 ]
-# ngrok
-CSRF_TRUSTED_ORIGINS = [
-    "https://f65c-109-186-49-243.ngrok-free.app"
-]
-
 
 SITE_ID = 1
 AUTHENTICATION_BACKENDS = [

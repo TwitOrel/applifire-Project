@@ -16,18 +16,19 @@
       <h2>Sign in</h2>
       <form id="login-form">
         <label>Username</label>
-        <input type="text" name="username" autocomplete="username" placeholder="example" required>
+        <input type="text" name="username" autocomplete="username" placeholder="username" required>
 
         <label>Password</label>
         <input type="password" name="password" placeholder="Enter your password" autocomplete="current-password" required>
 
 
         <div class="remember">
-          <label><input type="checkbox" /> Remember me</label>
+          <label><input type="checkbox" id="remember-me" /> Remember me</label>
           <a href="{% url 'password_reset' %}">Forgot your password?</a>
         </div>
 
         <button type="submit" class="primary-btn">Sign In</button>
+        <div id="login-error" class="error-message hidden"></div>
 
         <div class="divider"><span>OR</span></div>
 

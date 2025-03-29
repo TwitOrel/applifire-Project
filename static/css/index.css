@@ -1,4 +1,3 @@
-/* בסיס כללי */
 * {
   box-sizing: border-box;
   font-family: 'Inter', sans-serif;
@@ -6,7 +5,6 @@
   padding: 0;
 }
 
-/* גוף העמוד */
 body {
   background-color: #f7f9fc;
   display: flex;
@@ -15,7 +13,6 @@ body {
   height: 100vh;
 }
 
-/* עוטף כללי */
 .container {
   width: 100%;
   max-width: 500px;
@@ -29,7 +26,6 @@ body {
 }
 
 
-/* כרטיס טופס */
 .card {
   width: 100%;
   padding: 3rem;
@@ -38,7 +34,6 @@ body {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
-/* כותרת */
 h1 {
   font-size: 3rem;
   text-align: center;
@@ -46,7 +41,6 @@ h1 {
   color: #222;
 }
 
-/* תוויות */
 form label {
   display: block;
   margin-bottom: 0.4rem;
@@ -55,7 +49,6 @@ form label {
   color: #333;
 }
 
-/* שדות טופס */
 input[type="text"],
 input[type="password"],
 input[type="email"] {
@@ -73,7 +66,6 @@ input:focus {
   outline: none;
 }
 
-/* כפתור התחברות ראשי */
 .primary-btn {
   width: 100%;
   background-color: #1a3f80;
@@ -91,7 +83,6 @@ input:focus {
   background-color: #2c59a7;
 }
 
-/* כפתור גוגל */
 .google-btn {
   width: 100%;
   background-color: #4285f4;
@@ -107,6 +98,15 @@ input:focus {
   cursor: pointer;
   transition: background-color 0.2s ease;
   margin-top: 0.5rem;
+}
+
+a {
+  text-decoration: none;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  width: 100%;
+
 }
 
 .google-icon-wrapper {
@@ -132,7 +132,6 @@ input:focus {
   height: 20px;
 }
 
-/* מפריד בין אפשרויות */
 .divider {
   display: flex;
   align-items: center;
@@ -151,25 +150,51 @@ input:focus {
   margin: 0 10px;
 }
 
-/* שכחתי סיסמה / זכור אותי */
+/* forgot password / remember me */
 .remember {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
+  width: 100%;
+  font-size: 0.95rem;
+  margin: 0.5rem 0;
+  gap: 4.5rem;
+}
+
+.remember label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 1; 
+  white-space: nowrap; 
 }
 
 .remember a {
   text-decoration: none;
+  white-space: nowrap;
   color: #1a73e8;
+  font-weight: 500;
 }
+
 
 .remember a:hover {
   text-decoration: underline;
 }
 
-/* קישור הרשמה */
+.error-message {
+  color: #d93025;
+  background-color: transparent;
+  text-align: center;
+  font-size: 2rem;
+  margin-top: 2rem;
+  padding: 0;
+  font-weight: bold;
+}
+
+.hidden {
+  display: none;
+}
+
 .signup-link {
   text-align: center;
   margin-top: 1.8rem;

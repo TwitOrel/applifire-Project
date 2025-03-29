@@ -1,12 +1,61 @@
 let existingSerialNumbers = [];
-// ========================
-// handle with login by google
-// ========================
+let messageTimer = null;
 
 // ========================
-// Load, update and render user profile
+// handle the sidebar
 // ========================
-let messageTimer = null;
+document.addEventListener("DOMContentLoaded", () => {
+  const items = document.querySelectorAll(".sidebar-item");
+  const sections = document.querySelectorAll("div[id$='section'], section[id$='section']");
+
+  items.forEach(item => {
+    item.addEventListener("click", () => {
+      items.forEach(i => i.classList.remove("active"));
+      item.classList.add("active");
+
+      sections.forEach(sec => sec.classList.add("hidden"));
+
+      const targetId = item.getAttribute("data-target");
+      const targetSection = document.getElementById(targetId);
+      if (targetSection) targetSection.classList.remove("hidden");
+
+      if (targetId === "profile-section") {
+        showUserProfile();
+      }
+    });
+  });
+});
+
+// used for mark and render the choosec section
+function switchToSection(targetId) {
+  const sidebarItems = document.querySelectorAll(".sidebar-item");
+  const sections = document.querySelectorAll("div[id$='section'], section[id$='section']");
+
+  sections.forEach(sec => sec.classList.add("hidden"));
+
+  // show the choosev section
+  const targetSection = document.getElementById(targetId);
+  if (targetSection) {
+    targetSection.classList.remove("hidden");
+  }
+
+  // mark the choosen
+  sidebarItems.forEach(item => {
+    const itemTarget = item.getAttribute("data-target");
+    item.classList.toggle("active", itemTarget === targetId);
+  });
+    // for the specific needed
+  if (targetId === "devices-section") {
+    fetchDevices();
+  } else if (targetId === "profile-section") {
+    showUserProfile();
+  }
+}
+
+function getAccessToken() {
+  return localStorage.getItem("access") || sessionStorage.getItem("access");
+}
+
 
 function showMessage(message, isError = false) {
   const modal = document.getElementById("message-modal");
@@ -20,10 +69,8 @@ function showMessage(message, isError = false) {
 
   modal.classList.add(isError ? "error" : "success");
 
-  // נקה טיימר קודם אם קיים
   if (messageTimer) clearTimeout(messageTimer);
 
-  // סגירה אוטומטית אחרי 3 שניות
   messageTimer = setTimeout(() => {
     closeMessageModal();
   }, 3000);
@@ -36,7 +83,6 @@ function closeMessageModal() {
   modal.classList.add("hidden");
   overlay.classList.add("hidden");
 
-  // נקה טיימר אם המשתמש לחץ על כפתור
   if (messageTimer) {
     clearTimeout(messageTimer);
     messageTimer = null;
@@ -45,7 +91,7 @@ function closeMessageModal() {
 
 
 function showUserProfile() {
-  const token = localStorage.getItem("access");
+  const token = getAccessToken();
 
   fetch("/api/profile", {
     method: "GET",
@@ -60,6 +106,45 @@ function showUserProfile() {
       alert("Unable to load profile");
     });
 }
+
+async function generateApiKey() {
+  const token = getAccessToken();
+  try {
+    const response = await fetch("/api/api-key/", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) throw new Error("Failed to generate API key");
+    showUserProfile()
+    showMessage("API Key generated successfully!");
+  } catch (err) {
+    console.error(err);
+    showMessage("Failed to generate API Key.", true);
+  }
+}
+
+async function deleteApiKey() {
+  const token = getAccessToken();
+  try {
+    const response = await fetch("/api/api-key/", {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) throw new Error("Failed to delete API key");
+    showUserProfile()
+    showMessage("API Key deleted successfully!");
+  } catch (err) {
+    console.error(err);
+    showMessage("Failed to delete API Key.", true);
+  }
+}
+
 
 function renderProfile(profile) {
   const container = document.getElementById("profile-view");
@@ -106,35 +191,51 @@ function renderProfile(profile) {
 
       <div class="device-actions">
         <div class="left-actions">
-          <button id="back-to-devices-btn" class="primary-btn">← Back to device list</button>
+          <button id="back-to-devices-btn" class="primary-btn" data-target="devices-section">← Back to device list</button>
           <button id="update-profile-btn" class="primary-btn">Update Profile</button>
+          <button id="generate-api-key" class="primary-btn">🔄 Generate</button>
+          <button id="delete-api-key" class="primary-btn delete-btn">🗑️ Delete</button>
         </div>
       </div>
     </section>
   `;
 
-  // הסתרת מכשירים והצגת פרופיל
   document.getElementById("devices-section").classList.add("hidden");
   document.getElementById("profile-section").classList.remove("hidden");
 
-  // אירועים
-  document.getElementById("back-to-devices-btn").addEventListener("click", showDevices);
+  document.getElementById("back-to-devices-btn").addEventListener("click", () => {switchToSection("devices-section");});  
   document.getElementById("update-profile-btn").addEventListener("click", updateProfile);
+  document.getElementById("generate-api-key")?.addEventListener("click", generateApiKey);
+  document.getElementById("delete-api-key")?.addEventListener("click", deleteApiKey);
 }
 
-
+// update profil user
 function updateProfile() {
-  const token = localStorage.getItem("access");
+  const token = getAccessToken();
 
   const editableFields = Array.from(
     document.querySelectorAll("#profile-view .editable-field")
   );
 
   const updatedData = {};
+  let emptyField = null;
+
   editableFields.forEach((input) => {
     const key = input.id.replace("profile-", "");
-    updatedData[key] = input.value.trim();
+    const value = input.value.trim();
+
+    if (!value && !emptyField) {
+      emptyField = key;
+    }
+
+    updatedData[key] = value;
   });
+
+  if (emptyField) {
+    const fieldLabel = emptyField.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    showMessage(`Field "${fieldLabel}" cannot be empty.`, true);
+    return;
+  }
 
   fetch("/api/profile/", {
     method: "PUT",
@@ -158,19 +259,13 @@ function updateProfile() {
 }
 
 
-
-function showDevices() {
-  document.getElementById("profile-section").classList.add("hidden");
-  document.getElementById("devices-section").classList.remove("hidden");
-}
-
 // ========================
 // when clicking on account profile
 // ========================
 const profileLink = document.querySelector("#userDropdown a[href='/profile/']");
 profileLink.addEventListener("click", (e) => {
   e.preventDefault();
-  showUserProfile();
+  switchToSection("profile-section");
 });
 
 
@@ -183,7 +278,7 @@ const arrow = trigger.querySelector(".arrow");
 
 // Toggle dropdown on trigger click
 trigger.addEventListener("click", (e) => {
-  e.stopPropagation(); // שלא יפעיל את ה-close כשנלחץ בפנים
+  e.stopPropagation(); 
   const isOpen = dropdown.style.display === "flex";
 
   dropdown.style.display = isOpen ? "none" : "flex";
@@ -203,7 +298,7 @@ document.addEventListener("click", (e) => {
 // set user name on deshboard
 // ========================
 document.addEventListener("DOMContentLoaded", () => {
-  const token = localStorage.getItem("access");
+  const token = getAccessToken();
   if (!token) return;
 
   fetch("/api/profile", {
@@ -253,10 +348,10 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   
       logoutBtn.addEventListener("click", () => {
-        localStorage.removeItem("access");
-        localStorage.removeItem("refresh");
+        localStorage.clear();
+        sessionStorage.clear();
         window.location.href = "/";
-      });
+      });      
     }
   
     // ========================
@@ -271,14 +366,12 @@ document.addEventListener("DOMContentLoaded", () => {
       sidebar.insertBefore(nav, userSection);
     }
   
-    // ========================
-    // Fetch and Render Devices
-    // ========================
     fetchDevices();
   });
-  
-  function fetchDevices() {
-    const token = localStorage.getItem("access");
+
+  // to show the devices
+function fetchDevices() {
+    const token = getAccessToken();
     if (!token) {
       window.location.href = "/login/";
       return;
@@ -300,9 +393,10 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch((err) => {
         console.error("Error loading devices:", err);
       });
-  }
-  
-  function renderDeviceList(devices) {
+}
+
+// to show the devices list
+function renderDeviceList(devices) {
     const container = document.getElementById("device-view");
     container.innerHTML = "";
   
@@ -341,12 +435,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 }
 
+// to show details on device
 function renderDeviceDetails(device) {
   const container = document.getElementById("device-view");
 
   const immutableFields = ['serial_number', 'guid', 'user'];
 
-  // יצירת רשימה של השדות הקבועים
   const immutableHTML = Object.entries(device)
     .filter(([key]) => immutableFields.includes(key))
     .map(([key, value]) => {
@@ -360,7 +454,6 @@ function renderDeviceDetails(device) {
     })
     .join("");
 
-  // יצירת רשימה של השדות הניתנים לשינוי
   const editableHTML = Object.entries(device)
     .filter(([key]) => !immutableFields.includes(key))
     .map(([key, value]) => {
@@ -385,7 +478,7 @@ function renderDeviceDetails(device) {
       </div>
       <div class="device-actions">
         <div class="left-actions">
-          <button id="back-btn" class="primary-btn">← Back to device list</button>
+          <button id="back-to-devices-btn" class="primary-btn" data-target="devices-section">← Back to device list</button>
           <button id="update-btn" class="primary-btn">Update Device</button>
           <button id="delete-btn" class="delete-btn">Delete Device</button>
         </div>
@@ -404,7 +497,9 @@ function renderDeviceDetails(device) {
   `;
 
   // מאזינים לכפתורים
-  document.getElementById("back-btn").addEventListener("click", fetchDevices);
+  document.getElementById("back-to-devices-btn").addEventListener("click", () => {switchToSection("devices-section");});  
+
+  // document.getElementById("back-btn").addEventListener("click", fetchDevices);
   document.getElementById("update-btn").addEventListener("click", function() {updateDevice(device.serial_number);});
   document.getElementById("delete-btn").addEventListener("click", function() {deleteDevice(device.serial_number);});
 }
@@ -418,14 +513,13 @@ function updateDevice(serial_number) {
       software_version: softwareVersion,
   };
 
-  const token = localStorage.getItem('access'); // אם אתה שומר את הטוקן ב-LocalStorage
+  const token = getAccessToken();
 
-  // לשלוח את הבקשה לעדכון המכשיר
   fetch(`/api/devices/${serial_number}/update/`, {
       method: 'PATCH',
       headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` // הוספת הטוקן לבקשה
+          'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify(updatedData),
   })
@@ -441,11 +535,9 @@ function updateDevice(serial_number) {
 }
 
 function deleteDevice(serialNumber) {
-  // הצגת המודל
   document.getElementById('confirm-modal').classList.remove('hidden');
   document.getElementById('overlay').classList.remove('hidden');
 
-  // אישור מחיקה
   document.getElementById('confirm-delete').onclick = function () {
     fetch(`/api/devices/${serialNumber}/delete/`, {
       method: 'DELETE',
@@ -469,7 +561,7 @@ function deleteDevice(serialNumber) {
       });
   };
 
-  // ביטול מחיקה
+  // cancell delete
   document.getElementById('cancel-delete').onclick = function () {
     closeModal();
   };
@@ -490,24 +582,23 @@ document.getElementById("add-device-btn").addEventListener("click", () => {
 document.getElementById("cancel-add-device").addEventListener("click", () => {
   closeAddDeviceModal();
 });
-
+// jumping if there is problem
 function closeAddDeviceModal() {
   document.getElementById("add-device-modal").classList.add("hidden");
   document.getElementById("overlay").classList.add("hidden");
 }
 
+// handle adding device list
 document.getElementById("submit-add-device").addEventListener("click", () => {
   const serialNumber = document.getElementById("new-serial-number").value.trim();
   const model = document.getElementById("new-model").value.trim();
   const softwareVersion = document.getElementById("new-software-version").value.trim();
   const errorMsg = document.getElementById("add-error-message");
-  const token = localStorage.getItem("access");
+  const token = getAccessToken();
 
-  // נקה הודעת שגיאה קודמת
   errorMsg.textContent = "";
   errorMsg.classList.add("hidden");
 
-  // בדיקות שדות ריקים לפי סדר
   if (!serialNumber) {
     errorMsg.textContent = "Serial Number is required.";
     errorMsg.classList.remove("hidden");
@@ -526,14 +617,12 @@ document.getElementById("submit-add-device").addEventListener("click", () => {
     return;
   }
 
-  // בדיקה מקומית אם המספר קיים
   if (existingSerialNumbers.includes(serialNumber)) {
     errorMsg.textContent = `A device with this Serial Number ${serialNumber} already exists.`;
     errorMsg.classList.remove("hidden");
-    return; // עצור – לא נבצע fetch
+    return;
   }
 
-  // המשך לשליחה
   fetch("/api/devices/create/", {
     method: "POST",
     headers: {
@@ -552,7 +641,7 @@ document.getElementById("submit-add-device").addEventListener("click", () => {
     })
     .then((data) => {
       closeAddDeviceModal();
-      fetchDevices(); // רענון הטבלה
+      fetchDevices(); 
     })
     .catch((err) => {
       console.error(err);
@@ -560,4 +649,3 @@ document.getElementById("submit-add-device").addEventListener("click", () => {
       errorMsg.classList.remove("hidden");
     });
 });
-

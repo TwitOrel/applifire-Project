@@ -10,14 +10,16 @@
 </head>
 <body>
   <div class="dashboard">
+    <!-- sidebar  -->
     <aside class="sidebar">
       <div class="logo">Applifire</div>
       <nav>
-        <ul>
-          <li class="active">Devices</li>
-          <li>Dashboards</li>
-          <li>Data Feeds</li>
-          <li>Explorer</li>
+        <ul class="sidebar-nav">
+          <li class="sidebar-item active" data-target="devices-section">Devices</li>
+          <li class="sidebar-item" data-target="dashboard-section">example 2</li>
+          <li class="sidebar-item" data-target="feeds-section">example 3</li>
+          <li class="sidebar-item" data-target="explorer-section">example 4</li>
+          <li class="sidebar-item" data-target="profile-section">Profile</li>
         </ul>
       </nav>
       <div class="user-menu">
@@ -25,26 +27,25 @@
             <div class="user-icon" id="userInitial">?</div>
             <span class="user-name" id="usernameDisplay">Loading...</span>
             <span class="arrow">▾</span>
-          </div>
+        </div>
           
-      
+        <!-- userDropdown   -->
         <div class="user-dropdown" id="userDropdown">
           <a href="/profile/">Account</a>
           <a href="#" id="logoutBtn">Logout</a>
         </div>
       </div>
-      
     </aside>
 
     <main class="main-content">
         
+          <!-- devices section  -->
           <div id="devices-section">
             <header class="header">
               <h1>Your Devices</h1>
               <button id="add-device-btn" class="primary-btn">Add Device +</button>
             </header>
             
-            <!-- devices section  -->
             <section class="devices-table">
               <div id="device-view">
                 <div id="devices-list">
@@ -53,6 +54,7 @@
               </div>
             </section>
           </div>
+          
           <!-- profile section  -->
           <div id="profile-section" class="hidden">
             <header class="header">
@@ -104,6 +106,6 @@
 
   </div>
 
-  <script src="{% static 'js/dashboard.js' %}"></script>
+  <script src="{% static 'js/dashboard.js' %}" defer></script>
 </body>
 </html>
