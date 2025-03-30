@@ -66,6 +66,49 @@
             </section>
           </div>
           
+          <!-- edit profile section  -->
+          <div id="edit-profile-section" class="hidden">
+            <header class="header">
+              <h1>Edit My Profile</h1>
+            </header>
+            
+            </section class="edit-profile-card">
+            
+              <h3>Security</h3>
+              <div class="form-row">
+                <label for="current-password" class="form-label">Current Password:</label>
+                <input type="password" id="current-password" class="form-input" />
+              </div>
+              
+              <div class="form-row">
+                <label for="new-password" class="form-label">New Password:</label>
+                <input type="password" id="new-password" class="form-input" />
+              </div>
+              
+              <div class="form-row">
+                <label for="repeat-password" class="form-label">Repeat Password:</label>
+                <input type="password" id="repeat-password" class="form-input" />
+              </div>
+              
+              
+            
+              <div class="api-key-row">
+                <h3>API Key</h3>
+                <span id="edit-api-key" class="api-key-value">2470d22ba...7276</span>
+                <button id="generate-api-key-edit-profile" class="primary-btn" onclick="generateApiKeyForEdit()">🔄 Generate</button>
+                <button id="delete-api-key-edit-profile" class="primary-btn delete-btn" onclick="deleteApiKeyForEdit()">🗑️ Delete</button>
+              </div>
+              
+
+
+              <div id="editable-user-fields"></div>
+
+              <br><br>
+              <button id="cancel-edit-profile-btn" class="primary-btn cancel-btn" onclick="switchToSection('profile-section')">Cancel</button>
+              <button id="update-edit-profile-btn" class="primary-btn" onclick="saveChangesForEdit()">Save</button>
+            <section>
+          </div>
+          
 
     
     </main>

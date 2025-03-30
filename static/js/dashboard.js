@@ -1,5 +1,7 @@
 let existingSerialNumbers = [];
 let messageTimer = null;
+const immutableKeys = ["username", "guid", "email", "api-key"];
+
 
 // ========================
 // handle the sidebar
@@ -49,6 +51,67 @@ function switchToSection(targetId) {
     fetchDevices();
   } else if (targetId === "profile-section") {
     showUserProfile();
+  }
+  else if (targetId === "edit-profile-section") {
+    fillEditProfileForm();
+    sidebarItems.forEach(item => {
+      const itemTarget = item.getAttribute("data-target");
+      item.classList.toggle("active", itemTarget === "profile-section"); // שים לב: זה עדיין profile-section
+    });
+    //here
+  }
+}
+
+async function fillEditProfileForm() {
+  try {
+    const res = await fetch("/api/profile/", {
+      headers: {
+        Authorization: "Bearer " + getAccessToken(),
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch profile data");
+    }
+
+    const profile = await res.json();
+
+    // עדכון מפתח API
+    const apiKeySpan = document.querySelector("#edit-profile-section span");
+    if (apiKeySpan) {
+      apiKeySpan.textContent = profile["api-key"] || "N/A";
+    }
+
+    // איפוס שדות סיסמה
+    const passInputs = document.querySelectorAll("#edit-profile-section input[type='password']");
+    passInputs.forEach(input => input.value = "");
+
+    // שדות ניתנים לעריכה
+    const immutableKeys = ["username", "guid", "email", "api-key"];
+
+    const editableHTML = Object.entries(profile)
+      .filter(([key]) => !immutableKeys.includes(key))
+      .map(([key, value]) => {
+        const label = key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+        return `
+          <div class="form-row">
+            <span class="label">${label}:</span>
+            <div class="dual-input">
+              <span class="readonly-value">${value || "-"}</span>
+              <input type="text" id="edit-user-${key}" placeholder="${label.toLowerCase()}" />
+            </div>
+          </div>
+        `;
+      })
+      .join("");
+    
+    document.getElementById("editable-user-fields").innerHTML = editableHTML;
+    
+
+  } catch (err) {
+    console.error(err);
+    alert("error with loading user details");
+
   }
 }
 
@@ -118,8 +181,28 @@ async function generateApiKey() {
     });
 
     if (!response.ok) throw new Error("Failed to generate API key");
-    showUserProfile()
+    switchToSection("profile-section")
     showMessage("API Key generated successfully!");
+  } catch (err) {
+    console.error(err);
+    showMessage("Failed to generate API Key.", true);
+  }
+}
+
+async function generateApiKeyForEdit() {
+  const token = getAccessToken();
+  try {
+    const response = await fetch("/api/api-key/", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) throw new Error("Failed to generate API key");
+
+    showMessage("API Key generated successfully!");
+    switchToSection("edit-profile-section")
   } catch (err) {
     console.error(err);
     showMessage("Failed to generate API Key.", true);
@@ -137,7 +220,8 @@ async function deleteApiKey() {
     });
 
     if (!response.ok) throw new Error("Failed to delete API key");
-    showUserProfile()
+    switchToSection("profile-section")
+
     showMessage("API Key deleted successfully!");
   } catch (err) {
     console.error(err);
@@ -146,10 +230,134 @@ async function deleteApiKey() {
 }
 
 
+async function deleteApiKeyForEdit() {
+  const token = getAccessToken();
+  try {
+    const response = await fetch("/api/api-key/", {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) throw new Error("Failed to delete API key");
+
+    showMessage("API Key deleted successfully!");
+    switchToSection("edit-profile-section")
+  } catch (err) {
+    console.error(err);
+    showMessage("Failed to delete API Key.", true);
+  }
+}
+
+async function saveChangesForEdit() {
+  const token = getAccessToken();
+  
+  let passwordChanged = false;
+  let passwordError = null;
+  
+  // step 1: change password
+  const currentPassword = document.getElementById("current-password")?.value || "";
+  const newPassword = document.getElementById("new-password")?.value || "";
+  const repeatPassword = document.getElementById("repeat-password")?.value || "";
+  
+  console.log("1 password", currentPassword)
+  console.log("2 password", newPassword)
+  console.log("3 password", repeatPassword)
+
+  if (newPassword || currentPassword || repeatPassword) {
+    if (!currentPassword || !newPassword || !repeatPassword) {
+      showMessage("Please fill in all password fields.", true);
+      alert("Please fill in all password fields.", true);
+
+    } 
+    else if (newPassword !== repeatPassword) {
+      showMessage("New passwords do not match.", true);
+      alert("New passwords do not match.", true);
+
+    } 
+    else {
+      try {
+        const res = await fetch("/api/change-password/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            current_password: currentPassword,
+            new_password: newPassword,
+          }),
+        });
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          passwordError = errorData?.detail || "Failed to change password";
+        } else {
+          passwordChanged = true;
+          showMessage("Password updated successfully!");
+          alert("Password updated successfully!");
+
+        }
+      } catch (err) {
+        console.error(err);
+        passwordError = "Error updating password.";
+      }
+    }
+  }
+
+  // step 2: update editable fields
+  const editableFields = document.querySelectorAll("#editable-user-fields input");
+  const payload = {};
+  let changed = false;
+  
+  editableFields.forEach(input => {
+    const key = input.id.replace("edit-user-", "");
+    const newValue = input.value.trim();
+  
+    if (newValue) {
+      payload[key] = newValue;
+      changed = true;
+    }
+  });
+  
+  if (!changed) {
+    showMessage("No given changes to save.");
+    switchToSection("profile-section");
+    return;
+  }
+  
+  try {
+    const res = await fetch("/api/profile/", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+  
+    if (!res.ok) throw new Error("Failed to update profile");
+  
+    showMessage("Profile updated successfully!");
+    switchToSection("profile-section");
+  
+  } catch (err) {
+    console.error(err);
+    showMessage("Error updating profile.", true);
+  }
+  
+
+  // אם הייתה שגיאת סיסמה – נציג אותה אחרי עדכון הפרופיל
+  if (passwordError) {
+    showMessage(passwordError, true);
+  }
+}
+
+
+
 function renderProfile(profile) {
   const container = document.getElementById("profile-view");
-
-  const immutableKeys = ["username", "guid", "email", "api-key"];
 
   const immutableHTML = Object.entries(profile)
     .filter(([key]) => immutableKeys.includes(key))
@@ -179,7 +387,11 @@ function renderProfile(profile) {
 
   container.innerHTML = `
     <section class="profile-details-section">
-      <h2 class="device-title">Profile Overview</h2>
+
+      <div class="profile-header">
+        <h2 class="device-title">Profile Overview</h2>
+        <button id="edit-profile-btn" class="primary-btn edit-profile-btn">✏️ Edit</button>
+      </div>
 
       <div class="immutable-fields">
         ${immutableHTML}
@@ -204,6 +416,7 @@ function renderProfile(profile) {
   document.getElementById("profile-section").classList.remove("hidden");
 
   document.getElementById("back-to-devices-btn").addEventListener("click", () => {switchToSection("devices-section");});  
+  document.getElementById("edit-profile-btn").addEventListener("click", () => {switchToSection("edit-profile-section");})
   document.getElementById("update-profile-btn").addEventListener("click", updateProfile);
   document.getElementById("generate-api-key")?.addEventListener("click", generateApiKey);
   document.getElementById("delete-api-key")?.addEventListener("click", deleteApiKey);
@@ -478,8 +691,8 @@ function renderDeviceDetails(device) {
       </div>
       <div class="device-actions">
         <div class="left-actions">
-          <button id="back-to-devices-btn" class="primary-btn" data-target="devices-section">← Back to device list</button>
-          <button id="update-btn" class="primary-btn">Update Device</button>
+          <button id="back-to-devices-btn" class="primary-btn-device" data-target="devices-section">← Back to device list</button>
+          <button id="update-btn" class="primary-btn-device">Update Device</button>
           <button id="delete-btn" class="delete-btn">Delete Device</button>
         </div>
       </div>
@@ -496,10 +709,8 @@ function renderDeviceDetails(device) {
     <div id="overlay" class="overlay hidden"></div>
   `;
 
-  // מאזינים לכפתורים
   document.getElementById("back-to-devices-btn").addEventListener("click", () => {switchToSection("devices-section");});  
 
-  // document.getElementById("back-btn").addEventListener("click", fetchDevices);
   document.getElementById("update-btn").addEventListener("click", function() {updateDevice(device.serial_number);});
   document.getElementById("delete-btn").addEventListener("click", function() {deleteDevice(device.serial_number);});
 }
