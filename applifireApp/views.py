@@ -124,8 +124,7 @@ def user_profile_view(request):
             "email": request.user.email,
             "phone": serializer.data.get("phone"),
             "address": serializer.data.get("address"),
-            "api-key": serializer.data.get("api_key"),
-            "guid": serializer.data.get("guid")
+            "api-key": serializer.data.get("api_key")
         })
 
     elif request.method == 'PUT':
@@ -341,7 +340,6 @@ def login_user(request):
         # TODO test
         profile, created = UserProfile.objects.get_or_create(user=user)
         phone = profile.phone if profile.phone else "לא הוזן"
-        print("📞 PHONE FROM PROFILE:", profile.phone)
 
 
         return Response({

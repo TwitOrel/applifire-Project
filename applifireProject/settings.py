@@ -28,8 +28,6 @@ SECRET_KEY = 'django-insecure-cj!guk)^xm@sqy7sgrte*=-%ky*^*e_@v=n)05h(wi4)+18$u@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
-
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -70,7 +68,6 @@ INSTALLED_APPS = [
 # SITE_URL = "https://f65c-109-186-49-243.ngrok-free.app/"     # path ngrok gave after load
 # ngrok
 ALLOWED_HOSTS = [
-    "f65c-109-186-49-243.ngrok-free.app",
     "127.0.0.1",
     "localhost"
 ]

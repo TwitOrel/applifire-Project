@@ -6,7 +6,7 @@ class DeviceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Device
-        fields = ['serial_number', 'model', 'software_version', 'guid', 'user']
+        fields = ['serial_number', 'model', 'software_version', 'user']
         read_only_fields = ['user'] 
 
     def get_user(self, obj):
