@@ -4,10 +4,10 @@ const immutableKeys = ["username", "guid", "email", "api-key"];
 
 
 // ========================
-// handle the sidebar
+// handle the navbar
 // ========================
 document.addEventListener("DOMContentLoaded", () => {
-  const items = document.querySelectorAll(".sidebar-item");
+  const items = document.querySelectorAll(".navbar-item");
   const sections = document.querySelectorAll("div[id$='section'], section[id$='section']");
 
   items.forEach(item => {
@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // used for mark and render the choosec section
 function switchToSection(targetId) {
-  const sidebarItems = document.querySelectorAll(".sidebar-item");
+  const navbarItems = document.querySelectorAll(".navbar-item");
   const sections = document.querySelectorAll("div[id$='section'], section[id$='section']");
 
   sections.forEach(sec => sec.classList.add("hidden"));
@@ -42,7 +42,7 @@ function switchToSection(targetId) {
   }
 
   // mark the choosen
-  sidebarItems.forEach(item => {
+  navbarItems.forEach(item => {
     const itemTarget = item.getAttribute("data-target");
     item.classList.toggle("active", itemTarget === targetId);
   });
@@ -54,7 +54,7 @@ function switchToSection(targetId) {
   }
   else if (targetId === "edit-profile-section") {
     fillEditProfileForm();
-    sidebarItems.forEach(item => {
+    navbarItems.forEach(item => {
       const itemTarget = item.getAttribute("data-target");
       item.classList.toggle("active", itemTarget === "profile-section"); // שים לב: זה עדיין profile-section
     });
@@ -568,15 +568,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   
     // ========================
-    // Move Sidebar Navigation to Top
+    // Move navbar Navigation to Top
     // ========================
-    const nav = document.querySelector(".sidebar nav");
-    const logo = document.querySelector(".sidebar .logo");
-    const userSection = document.querySelector(".sidebar .user-section");
+    const nav = document.querySelector(".navbar nav");
+    const logo = document.querySelector(".navbar .logo");
+    const userSection = document.querySelector(".navbar .user-section");
   
     if (nav && logo && userSection) {
-      const sidebar = document.querySelector(".sidebar");
-      sidebar.insertBefore(nav, userSection);
+      const navbar = document.querySelector(".navbar");
+      navbar.insertBefore(nav, userSection);
     }
   
     fetchDevices();

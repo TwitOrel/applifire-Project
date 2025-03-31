@@ -9,145 +9,138 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="dashboard">
-    <!-- sidebar  -->
-    <aside class="sidebar">
-      <div class="logo">Applifire</div>
-      <nav>
-        <ul class="sidebar-nav">
-          <li class="sidebar-item active" data-target="devices-section">Devices</li>
-          <li class="sidebar-item" data-target="dashboard-section">example 2</li>
-          <li class="sidebar-item" data-target="feeds-section">example 3</li>
-          <li class="sidebar-item" data-target="explorer-section">example 4</li>
-          <li class="sidebar-item" data-target="profile-section">Profile</li>
-        </ul>
-      </nav>
-      <div class="user-menu">
-        <div class="user-trigger" id="userTrigger">
-            <div class="user-icon" id="userInitial">?</div>
-            <span class="user-name" id="usernameDisplay">Loading...</span>
-            <span class="arrow">▾</span>
-        </div>
-          
-        <!-- userDropdown   -->
-        <div class="user-dropdown" id="userDropdown">
-          <a href="/profile/">Account</a>
-          <a href="#" id="logoutBtn">Logout</a>
-        </div>
+  <!-- navbar -->
+  <header class="navbar">
+    <div class="logo">Applifire</div>
+
+    <ul class="navbar-nav">
+      <li class="navbar-item active" data-target="devices-section">Devices</li>
+      <li class="navbar-item" data-target="dashboard-section">example</li>
+      <li class="navbar-item" data-target="profile-section">Profile</li>
+    </ul>
+
+    <div class="user-menu">
+      <div class="user-trigger" id="userTrigger">
+        <div class="user-icon" id="userInitial">?</div>
+        <span class="user-name" id="usernameDisplay">Loading...</span>
+        <span class="arrow">▾</span>
       </div>
-    </aside>
 
-    <main class="main-content">
-        
-          <!-- devices section  -->
-          <div id="devices-section">
-            <header class="header">
-              <h1>Your Devices</h1>
-              <button id="add-device-btn" class="primary-btn">Add Device +</button>
-            </header>
-            
-            <section class="devices-table">
-              <div id="device-view">
-                <div id="devices-list">
-                  <!-- Headers + rows will be injected via JS -->
-                </div>
-              </div>
-            </section>
-          </div>
-          
-          <!-- profile section  -->
-          <div id="profile-section" class="hidden">
-            <header class="header">
-              <h1>Your Profile</h1>
-            </header>
-          
-            <section class="profile-card">
-              <div id="profile-view"></div>
-            </section>
-          </div>
-          
-          <!-- edit profile section  -->
-          <div id="edit-profile-section" class="hidden">
-            <header class="header">
-              <h1>Edit My Profile</h1>
-            </header>
-            
-            </section class="edit-profile-card">
-            
-              <h3>Security</h3>
-              <div class="form-row">
-                <label for="current-password" class="form-label">Current Password:</label>
-                <input type="password" id="current-password" class="form-input" />
-              </div>
-              
-              <div class="form-row">
-                <label for="new-password" class="form-label">New Password:</label>
-                <input type="password" id="new-password" class="form-input" />
-              </div>
-              
-              <div class="form-row">
-                <label for="repeat-password" class="form-label">Repeat Password:</label>
-                <input type="password" id="repeat-password" class="form-input" />
-              </div>
-              
-              
-            
-              <div class="api-key-row">
-                <h3>API Key</h3>
-                <span id="edit-api-key" class="api-key-value">2470d22ba...7276</span>
-                <button id="generate-api-key-edit-profile" class="primary-btn" onclick="generateApiKeyForEdit()">🔄 Generate</button>
-                <button id="delete-api-key-edit-profile" class="primary-btn delete-btn" onclick="deleteApiKeyForEdit()">🗑️ Delete</button>
-              </div>
-              
-
-
-              <div id="editable-user-fields"></div>
-
-              <br><br>
-              <button id="cancel-edit-profile-btn" class="primary-btn cancel-btn" onclick="switchToSection('profile-section')">Cancel</button>
-              <button id="update-edit-profile-btn" class="primary-btn" onclick="saveChangesForEdit()">Save</button>
-            <section>
-          </div>
-          
-
-    
-    </main>
-    <!-- modal for update profile user  -->
-    <div id="message-modal" class="modal hidden">
-      <div class="modal-content">
-        <p id="message-text"></p>
-        <div class="modal-buttons">
-          <button class="primary-btn" onclick="closeMessageModal()">Close</button>
-        </div>
+      <!-- userDropdown -->
+      <div class="user-dropdown" id="userDropdown">
+        <a href="/profile/">Account</a>
+        <a href="#" id="logoutBtn">Logout</a>
       </div>
     </div>
-    <div id="message-overlay" class="overlay hidden"></div>
-    
-
-    <!-- modal for add device  -->
-    <div id="add-device-modal" class="modal hidden">
-        <div class="modal-content">
-          <h3>Add New Device</h3>
-          <label>Serial Number:</label>
-          <input type="text" id="new-serial-number" />
-    
-          <label>Model:</label>
-          <input type="text" id="new-model" />
-    
-          <label>Software Version:</label>
-          <input type="text" id="new-software-version" />
-
-          <div id="add-error-message" class="error-message hidden"></div>
-    
-          <div class="modal-buttons">
-            <button class="primary-btn" id="submit-add-device">Add Device</button>
-            <button class="cancel-btn" id="cancel-add-device">Cancel</button>
-          </div>
+  </header>
+  
+  <main class="main-content">
+      
+        <!-- devices section  -->
+        <div id="devices-section">
+          <header class="header">
+            <h1>Your Devices</h1>
+            <button id="add-device-btn" class="primary-btn">Add Device +</button>
+          </header>
+          
+          <section class="devices-table">
+            <div id="device-view">
+              <div id="devices-list">
+                <!-- Headers + rows will be injected via JS -->
+              </div>
+            </div>
+          </section>
         </div>
-      </div>
-      <div id="overlay" class="overlay hidden"></div>
+        
+        <!-- profile section  -->
+        <div id="profile-section" class="hidden">
+          <header class="header">
+            <h1>Your Profile</h1>
+          </header>
+        
+          <section class="profile-card">
+            <div id="profile-view"></div>
+          </section>
+        </div>
+        
+        <!-- edit profile section  -->
+        <div id="edit-profile-section" class="hidden">
+          <header class="header">
+            <h1>Edit My Profile</h1>
+          </header>
+          
+          </section class="edit-profile-card">
+          
+            <h3>Security</h3>
+            <div class="form-row">
+              <label for="current-password" class="form-label">Current Password:</label>
+              <input type="password" id="current-password" class="form-input" />
+            </div>
+            
+            <div class="form-row">
+              <label for="new-password" class="form-label">New Password:</label>
+              <input type="password" id="new-password" class="form-input" />
+            </div>
+            
+            <div class="form-row">
+              <label for="repeat-password" class="form-label">Repeat Password:</label>
+              <input type="password" id="repeat-password" class="form-input" />
+            </div>
+            
+            
+          
+            <div class="api-key-row">
+              <h3>API Key</h3>
+              <span id="edit-api-key" class="api-key-value">2470d22ba...7276</span>
+              <button id="generate-api-key-edit-profile" class="primary-btn" onclick="generateApiKeyForEdit()">🔄 Generate</button>
+              <button id="delete-api-key-edit-profile" class="primary-btn delete-btn" onclick="deleteApiKeyForEdit()">🗑️ Delete</button>
+            </div>
+            
 
+
+            <div id="editable-user-fields"></div>
+
+            <br><br>
+            <button id="cancel-edit-profile-btn" class="primary-btn cancel-btn" onclick="switchToSection('profile-section')">Cancel</button>
+            <button id="update-edit-profile-btn" class="primary-btn" onclick="saveChangesForEdit()">Save</button>
+          <section>
+        </div>
+        
+  </main>
+
+  <!-- modal for update profile user  -->
+  <div id="message-modal" class="modal hidden">
+    <div class="modal-content">
+      <p id="message-text"></p>
+      <div class="modal-buttons">
+        <button class="primary-btn" onclick="closeMessageModal()">Close</button>
+      </div>
+    </div>
   </div>
+  <div id="message-overlay" class="overlay hidden"></div>
+  
+  <!-- modal for add device  -->
+  <div id="add-device-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Add New Device</h3>
+      <label>Serial Number:</label>
+      <input type="text" id="new-serial-number" />
+
+      <label>Model:</label>
+      <input type="text" id="new-model" />
+
+      <label>Software Version:</label>
+      <input type="text" id="new-software-version" />
+
+      <div id="add-error-message" class="error-message hidden"></div>
+
+      <div class="modal-buttons">
+        <button class="primary-btn" id="submit-add-device">Add Device</button>
+        <button class="cancel-btn" id="cancel-add-device">Cancel</button>
+      </div>
+    </div>
+  </div>
+  <div id="overlay" class="overlay hidden"></div>
 
   <script src="{% static 'js/dashboard.js' %}" defer></script>
 </body>
