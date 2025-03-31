@@ -121,6 +121,15 @@ gap: 20px;
   display: none;
 }
 
+.form-note {
+  font-size: 1rem;
+  color: #ff0000;
+  margin-top: 4px;
+  background-color: #f5f5f5;
+  width: 25%;
+  margin-block: 15px;
+}
+
 .logo {
   font-size: 1.5rem;
   font-weight: bold;
@@ -383,6 +392,10 @@ button:hover,
   display: none;
 }
 
+.form-row.hidden {
+  display: none;
+}
+
 .navbar {
   width: 100%;
   position: sticky; /* או fixed */
@@ -472,11 +485,16 @@ button:hover,
 
 
 .user-icon {
-  background-color: #38bdf8;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  padding: 0.4rem;
-  font-size: 0.8rem;
+  background-color: #c5abab;
   color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
 }
 
 .user-trigger {
@@ -484,7 +502,7 @@ button:hover,
   align-items: center;
   cursor: pointer;
   gap: 10px;
-  background-color: #2b3447;
+  background-color: #23799f;
   padding: 10px;
   border-radius: 30px;
   color: white;

@@ -31,9 +31,8 @@
         <a href="/profile/">Account</a>
         <a href="#" id="logoutBtn">Logout</a>
       </div>
-    </div>
   </header>
-  
+
   <main class="main-content">
       
         <!-- devices section  -->
@@ -69,10 +68,10 @@
             <h1>Edit My Profile</h1>
           </header>
           
-          </section class="edit-profile-card">
+          <section class="edit-profile-card">
           
             <h3>Security</h3>
-            <div class="form-row">
+            <div class="form-row hidden" id="current-password-group">
               <label for="current-password" class="form-label">Current Password:</label>
               <input type="password" id="current-password" class="form-input" />
             </div>
@@ -87,7 +86,9 @@
               <input type="password" id="repeat-password" class="form-input" />
             </div>
             
-            
+            <div id="set-password-hint" class="form-note hidden">
+              Set a password to enable manual login (email + password).
+            </div>
           
             <div class="api-key-row">
               <h3>API Key</h3>
@@ -103,7 +104,7 @@
             <br><br>
             <button id="cancel-edit-profile-btn" class="primary-btn cancel-btn" onclick="switchToSection('profile-section')">Cancel</button>
             <button id="update-edit-profile-btn" class="primary-btn" onclick="saveChangesForEdit()">Save</button>
-          <section>
+          </section>
         </div>
         
   </main>

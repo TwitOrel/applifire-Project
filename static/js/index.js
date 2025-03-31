@@ -68,20 +68,19 @@ function checkGoogleLogin() {
     });
 }
 
-
-// for the login
+// for the login (with email and password)
 document.getElementById("login-form").addEventListener("submit", async function (e) {
   e.preventDefault();
-  const username = document.querySelector('input[name="username"]').value;
-  const password = document.querySelector('input[name="password"]').value;
-  const remember = document.getElementById("remember-me").checked; 
 
+  const email = document.querySelector('input[name="email"]').value;
+  const password = document.querySelector('input[name="password"]').value;
+  const remember = document.getElementById("remember-me").checked;
 
   try {
     const response = await fetch("/api/login/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ email, password }),
     });
 
     const data = await response.json();
@@ -92,14 +91,44 @@ document.getElementById("login-form").addEventListener("submit", async function 
       storage.setItem("refresh", data.refresh);
       window.location.href = "/dashboard/";
     } else {
-      setErrorMessage(data.message || "Invalid username/password")
+      setErrorMessage(data.message || "Invalid email/password");
     }
-    
-  }
-   catch (err) {
-      setErrorMessage("Login failed. Please check your credentials.")  
+
+  } catch (err) {
+    setErrorMessage("Login failed. Please check your credentials.");
   }
 });
+
+
+// for the login (with user and password)
+// document.getElementById("login-form").addEventListener("submit", async function (e) {
+//   e.preventDefault();
+//   const username = document.querySelector('input[name="username"]').value;
+//   const password = document.querySelector('input[name="password"]').value;
+//   const remember = document.getElementById("remember-me").checked; 
+//   try {
+//     const response = await fetch("/api/login/", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({ username, password }),
+//     });
+
+//     const data = await response.json();
+
+//     if (response.ok) {
+//       const storage = remember ? localStorage : sessionStorage;
+//       storage.setItem("access", data.access);
+//       storage.setItem("refresh", data.refresh);
+//       window.location.href = "/dashboard/";
+//     } else {
+//       setErrorMessage(data.message || "Invalid username/password")
+//     }
+    
+//   }
+//    catch (err) {
+//       setErrorMessage("Login failed. Please check your credentials.")  
+//   }
+// });
 
 function setErrorMessage(errorMessage) {
   const errorDiv = document.getElementById("login-error");

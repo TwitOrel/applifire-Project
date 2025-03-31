@@ -87,10 +87,9 @@ async function fillEditProfileForm() {
     passInputs.forEach(input => input.value = "");
 
     // שדות ניתנים לעריכה
-    const immutableKeys = ["username", "guid", "email", "api-key"];
 
     const editableHTML = Object.entries(profile)
-      .filter(([key]) => !immutableKeys.includes(key))
+      .filter(([key]) => !immutableKeys.includes(key) && key !== "has_password")
       .map(([key, value]) => {
         const label = key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
         return `
@@ -106,7 +105,23 @@ async function fillEditProfileForm() {
       .join("");
     
     document.getElementById("editable-user-fields").innerHTML = editableHTML;
-    
+
+    const hasPassword = profile.has_password;
+    const currentPwdGroup = document.getElementById('current-password-group');
+    const passwordHint = document.getElementById('set-password-hint');
+
+    if (currentPwdGroup && passwordHint) {
+      if (hasPassword) {
+        currentPwdGroup.classList.remove('hidden');
+        passwordHint.classList.add('hidden');
+      } else {
+        currentPwdGroup.classList.add('hidden');
+        passwordHint.classList.remove('hidden');
+      }
+    }
+
+// שמירה גלובלית לשימוש בכפתור save
+    window.userHasPassword = hasPassword;
 
   } catch (err) {
     console.error(err);
@@ -136,7 +151,7 @@ function showMessage(message, isError = false) {
 
   messageTimer = setTimeout(() => {
     closeMessageModal();
-  }, 3000);
+  }, 5000);
 }
 
 function closeMessageModal() {
@@ -252,64 +267,68 @@ async function deleteApiKeyForEdit() {
 
 async function saveChangesForEdit() {
   const token = getAccessToken();
-  
+
   let passwordChanged = false;
   let passwordError = null;
-  
-  // step 1: change password
+  let changed = false;
+
+  // step 1: change/set password
   const currentPassword = document.getElementById("current-password")?.value || "";
   const newPassword = document.getElementById("new-password")?.value || "";
   const repeatPassword = document.getElementById("repeat-password")?.value || "";
-  
-  console.log("1 password", currentPassword)
-  console.log("2 password", newPassword)
-  console.log("3 password", repeatPassword)
 
   if (newPassword || currentPassword || repeatPassword) {
-    if (!currentPassword || !newPassword || !repeatPassword) {
+    if (!newPassword || !repeatPassword || (window.userHasPassword && !currentPassword)) {
       showMessage("Please fill in all password fields.", true);
-      alert("Please fill in all password fields.", true);
+      return;
+    }
 
-    } 
-    else if (newPassword !== repeatPassword) {
+    if (newPassword !== repeatPassword) {
       showMessage("New passwords do not match.", true);
-      alert("New passwords do not match.", true);
+      return;
+    }
+
+    try {
+      const payload = {
+        new_password: newPassword,
+      };
+
+      // רק אם למשתמש יש סיסמה קיימת נשלח גם את current
+      if (window.userHasPassword) {
+        payload.current_password = currentPassword;
+      }
+
+      const res = await fetch("/api/change-password/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        passwordError = data?.error || "Failed to update password.";
+        showMessage(passwordError, true);
+      } else {
+        passwordChanged = true;
+        changed = true
+        showMessage(data.message || "Password updated successfully!");
+      }
 
     } 
-    else {
-      try {
-        const res = await fetch("/api/change-password/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            current_password: currentPassword,
-            new_password: newPassword,
-          }),
-        });
-
-        if (!res.ok) {
-          const errorData = await res.json();
-          passwordError = errorData?.detail || "Failed to change password";
-        } else {
-          passwordChanged = true;
-          showMessage("Password updated successfully!");
-          alert("Password updated successfully!");
-
-        }
-      } catch (err) {
-        console.error(err);
-        passwordError = "Error updating password.";
-      }
+    catch (err) {
+      console.error(err);
+      passwordError = "Error updating password.";
+      showMessage(passwordError, true);
     }
   }
 
   // step 2: update editable fields
   const editableFields = document.querySelectorAll("#editable-user-fields input");
   const payload = {};
-  let changed = false;
   
   editableFields.forEach(input => {
     const key = input.id.replace("edit-user-", "");
@@ -360,7 +379,7 @@ function renderProfile(profile) {
   const container = document.getElementById("profile-view");
 
   const immutableHTML = Object.entries(profile)
-    .filter(([key]) => immutableKeys.includes(key))
+    .filter(([key]) => immutableKeys.includes(key) && key !== "has_password")
     .map(([key, value]) => {
       const label = key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
       return `
@@ -373,7 +392,7 @@ function renderProfile(profile) {
     .join("");
 
   const editableHTML = Object.entries(profile)
-    .filter(([key]) => !immutableKeys.includes(key))
+    .filter(([key]) => !immutableKeys.includes(key) && key !== "has_password")
     .map(([key, value]) => {
       const label = key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
       return `
