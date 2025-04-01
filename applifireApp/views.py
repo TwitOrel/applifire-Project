@@ -125,7 +125,7 @@ def user_profile_view(request):
             "phone": serializer.data.get("phone"),
             "address": serializer.data.get("address"),
             "api-key": serializer.data.get("api_key"),
-            "has_password": request.user.has_usable_password()
+            "guid": serializer.data.get("guid")
         })
 
     elif request.method == 'PUT':
@@ -329,47 +329,28 @@ def reset_password_request(request):
 
     return Response({'message': 'Password reset link generated (check email)'})
 
-# used for login (with username and password)
-# @api_view(['POST'])
-# def login_user(request):
-#     username = request.data.get("username")
-#     password = request.data.get("password")
-
-#     user = authenticate(username=username, password=password)
-#     if user:
-#         refresh = RefreshToken.for_user(user)
-
-#         return Response({
-#             "message": "Successfully logged in!",   
-#             "refresh": str(refresh),
-#             "access": str(refresh.access_token),
-#         })
-
-#     return Response({"error": "Invalid username or password"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-# used for login (with email and password)
 @api_view(['POST'])
 def login_user(request):
-    email = request.data.get("email")
+    username = request.data.get("username")
     password = request.data.get("password")
 
-    try:
-        user_obj = User.objects.get(email=email)
-        user = authenticate(username=user_obj.username, password=password)
-    except User.DoesNotExist:
-        user = None
-
+    user = authenticate(username=username, password=password)
     if user:
         refresh = RefreshToken.for_user(user)
 
+        # TODO test
+        profile, created = UserProfile.objects.get_or_create(user=user)
+        phone = profile.phone if profile.phone else "no set phone"
+
+
         return Response({
-            "message": "Successfully logged in!",
+            "message": "Successfully logged in!",   
             "refresh": str(refresh),
             "access": str(refresh.access_token),
+            "phone": phone
         })
 
-    return Response({"message": "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
+    return Response({"error": "Invalid username or password"}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

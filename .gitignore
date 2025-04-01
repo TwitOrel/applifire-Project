@@ -14,3 +14,6 @@ migrations/
 
 important.txt
 __pycache__/
+
+staticfiles
+
