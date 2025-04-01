@@ -15,8 +15,8 @@
 
     <ul class="navbar-nav">
       <li class="navbar-item active" data-target="devices-section">Devices</li>
-      <li class="navbar-item" data-target="dashboard-section">example</li>
-      <li class="navbar-item" data-target="profile-section">Profile</li>
+      <!-- profile  -->
+      <!-- <li class="navbar-item" data-target="profile-section">Profile</li> -->
     </ul>
 
     <div class="user-menu">
@@ -71,21 +71,23 @@
           <section class="edit-profile-card">
           
             <h3>Security</h3>
-            <div class="form-row hidden" id="current-password-group">
-              <label for="current-password" class="form-label">Current Password:</label>
-              <input type="password" id="current-password" class="form-input" />
-            </div>
-            
-            <div class="form-row">
-              <label for="new-password" class="form-label">New Password:</label>
-              <input type="password" id="new-password" class="form-input" />
-            </div>
-            
-            <div class="form-row">
-              <label for="repeat-password" class="form-label">Repeat Password:</label>
-              <input type="password" id="repeat-password" class="form-input" />
-            </div>
-            
+            <form id="password-change-form">
+              <div class="form-row hidden" id="current-password-group">
+                <label for="current-password" class="form-label">Current Password:</label>
+                <input type="password" id="current-password" class="form-input" autocomplete="current-password"/>
+              </div>
+              
+              <div class="form-row">
+                <label for="new-password" class="form-label">New Password:</label>
+                <input type="password" id="new-password" class="form-input" autocomplete="new-password"/>
+              </div>
+              
+              <div class="form-row">
+                <label for="repeat-password" class="form-label">Repeat Password:</label>
+                <input type="password" id="repeat-password" class="form-input" autocomplete="new-password"/>
+              </div>
+            </form>
+
             <div id="set-password-hint" class="form-note hidden">
               Set a password to enable manual login (email + password).
             </div>
@@ -103,7 +105,7 @@
 
             <br><br>
             <button id="cancel-edit-profile-btn" class="primary-btn cancel-btn" onclick="switchToSection('profile-section')">Cancel</button>
-            <button id="update-edit-profile-btn" class="primary-btn" onclick="saveChangesForEdit()">Save</button>
+            <button id="update-edit-profile-btn" class="primary-btn" onclick="saveChangesForEdit()">Apply</button>
           </section>
         </div>
         

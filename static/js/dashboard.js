@@ -378,27 +378,14 @@ async function saveChangesForEdit() {
 function renderProfile(profile) {
   const container = document.getElementById("profile-view");
 
-  const immutableHTML = Object.entries(profile)
-    .filter(([key]) => immutableKeys.includes(key) && key !== "has_password")
+  const allFieldsHTML = Object.entries(profile)
+    .filter(([key]) => key !== "has_password")
     .map(([key, value]) => {
       const label = key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
       return `
         <div class="device-pair">
           <span class="label">${label}:</span>
           <span class="value">${value || "-"}</span>
-        </div>
-      `;
-    })
-    .join("");
-
-  const editableHTML = Object.entries(profile)
-    .filter(([key]) => !immutableKeys.includes(key) && key !== "has_password")
-    .map(([key, value]) => {
-      const label = key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-      return `
-        <div class="device-pair">
-          <span class="label">${label}:</span>
-          <input type="text" id="profile-${key}" value="${value || ""}" class="editable-field" />
         </div>
       `;
     })
@@ -412,33 +399,26 @@ function renderProfile(profile) {
         <button id="edit-profile-btn" class="primary-btn edit-profile-btn">✏️ Edit</button>
       </div>
 
-      <div class="immutable-fields">
-        ${immutableHTML}
-      </div>
-
-      <div class="editable-fields">
-        ${editableHTML}
+      <div class="all-fields">
+        ${allFieldsHTML}
       </div>
 
       <div class="device-actions">
         <div class="left-actions">
           <button id="back-to-devices-btn" class="primary-btn" data-target="devices-section">← Back to device list</button>
-          <button id="update-profile-btn" class="primary-btn">Update Profile</button>
-          <button id="generate-api-key" class="primary-btn">🔄 Generate</button>
-          <button id="delete-api-key" class="primary-btn delete-btn">🗑️ Delete</button>
         </div>
       </div>
     </section>
   `;
-
-  document.getElementById("devices-section").classList.add("hidden");
-  document.getElementById("profile-section").classList.remove("hidden");
-
-  document.getElementById("back-to-devices-btn").addEventListener("click", () => {switchToSection("devices-section");});  
-  document.getElementById("edit-profile-btn").addEventListener("click", () => {switchToSection("edit-profile-section");})
-  document.getElementById("update-profile-btn").addEventListener("click", updateProfile);
-  document.getElementById("generate-api-key")?.addEventListener("click", generateApiKey);
-  document.getElementById("delete-api-key")?.addEventListener("click", deleteApiKey);
+  
+  // <button id="update-profile-btn" class="primary-btn">Update Profile</button>
+  // <button id="generate-api-key" class="primary-btn">🔄 Generate</button>
+  // <button id="delete-api-key" class="primary-btn delete-btn">🗑️ Delete</button>
+  document.getElementById("back-to-devices-btn")?.addEventListener("click", () => {switchToSection("devices-section");});
+    document.getElementById("edit-profile-btn").addEventListener("click", () => {switchToSection("edit-profile-section");})
+  // document.getElementById("update-profile-btn")?.addEventListener("click", updateProfile);
+  // document.getElementById("generate-api-key")?.addEventListener("click", generateApiKey);
+  // document.getElementById("delete-api-key")?.addEventListener("click", deleteApiKey);
 }
 
 // update profil user
