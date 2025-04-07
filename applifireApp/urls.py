@@ -24,9 +24,7 @@ urlpatterns += [
     path('api/api-key/', api_key_view, name='api-key'),
     path('api/change-password/', change_password, name='change-password'),
     path('api/delete-account/', delete_account, name='delete-account'),
-    
     # 2 funcs bellow used for remember me check-box (when log in)
-    path('api/user-info/', user_info, name='user-info'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     # confirm email after register
     path('api/verify-email/<uuid:token>/', verify_email, name='verify-email'),
