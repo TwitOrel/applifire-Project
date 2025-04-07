@@ -15,7 +15,6 @@ from pathlib import Path
 from datetime import timedelta
 
 load_dotenv()
-print("check for deploy")
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
