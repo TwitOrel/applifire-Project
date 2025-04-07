@@ -377,6 +377,8 @@ async function saveChangesForEdit() {
 
 function renderProfile(profile) {
   console.log("here only for test file dashboard.js line 379!")
+  console.log("here only for 379!")
+
   const container = document.getElementById("profile-view");
 
   const allFieldsHTML = Object.entries(profile)
