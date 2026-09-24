@@ -57,7 +57,17 @@ The project was also tested during development using tools such as Postman and c
 
 ## Screenshots
 
-Screenshots of the application UI will be added here.
+### Sign in
+
+![Sign in](screenshots/sign-in.png)
+
+### Sign up
+
+![Sign up](screenshots/sign-up.png)
+
+### Devices dashboard
+
+![Devices dashboard](screenshots/dashboard-devices.png)
 
 ## Running the Project Locally
 
