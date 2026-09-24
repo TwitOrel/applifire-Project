@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up - applifire</title>
+  <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="page-title">
+    <h1>Applifire</h1>
+  </div>  
+  <div class="container">
+    <div class="left">
+      <img alt="applifire logo" class="logo" />
+      <ul>
+        <li>⚡ Retrieve data in real-time from cloud services</li>
+        <li>✅ Simple for teams and clients to use</li>
+        <li>🎁 Start for free — no credit card required</li>
+      </ul>
+
+    </div>
+
+    <div class="right">
+      <div class="card">
+        <h2>Create your account</h2>
+
+        <a href="/accounts/google/login/" class="oauth google">
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" />
+          Sign up with Google
+        </a>
+        
+        <form id="signup-form">
+          <input type="text" id="username" placeholder="Username*" required />
+          <input type="email" id="email" placeholder="Email*" autocomplete="email" required>
+          <input type="password" id="password" placeholder="Password*" autocomplete="current-password" required>
+          <p id="register-error-message" style="color: red; text-align: center; margin: 10px 0;"></p>
+          <button type="submit" class="create-btn">Create account</button>            
+      </form>
+
+        <div class="login-link">
+          <div class="signin-line">
+            Already have an account? <a href="/login/">Sign in</a>
+          </div>
+          <div class="forgot-password">
+            <a href="{% url 'password_reset' %}">Forgot your password?</a>
+          </div>          
+        </div>
+  </div>
+
+
+  <script src="{% static 'js/signup.js' %}"></script>
+</body>
+</html>

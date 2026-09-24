@@ -15,7 +15,7 @@ from pathlib import Path
 from datetime import timedelta
 
 load_dotenv()
-
+print("check for deploy")
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -26,9 +26,16 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'django-insecure-cj!guk)^xm@sqy7sgrte*=-%ky*^*e_@v=n)05h(wi4)+18$u@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    'applifire.duckdns.org',
+    'applifire.duckdns.org:8000',
+    "127.0.0.1",
+    "localhost",
+    "128.199.36.195"
+]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -55,6 +62,7 @@ INSTALLED_APPS = [
 
     # my app
     'applifireApp',
+    'devices',
     # rest frame work
     'rest_framework',
     'rest_framework_simplejwt',
@@ -67,15 +75,12 @@ INSTALLED_APPS = [
 
 # Django OAuth
 # SITE_URL = "https://f65c-109-186-49-243.ngrok-free.app/"     # path ngrok gave after load
+
 # ngrok
-ALLOWED_HOSTS = [
-    "f65c-109-186-49-243.ngrok-free.app",
-    "127.0.0.1",
-    "localhost"
-]
-# ngrok
-CSRF_TRUSTED_ORIGINS = [
-    "https://f65c-109-186-49-243.ngrok-free.app"
+CSRF_TRUSTED_ORIGINS = ['http://128.199.36.195:8000',
+     'http://128.199.36.195',
+     'https://128.199.36.195',
+     'https://128.199.36.195:8000'
 ]
 
 
@@ -93,12 +98,7 @@ SOCIALACCOUNT_PROVIDERS = {
         ],
         'AUTH_PARAMS': {
             'access_type': 'online',
-        }
-    }
-}
-
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
+        },
         'APP': {
             'client_id': os.getenv("GOOGLE_CLIENT_ID"),
             'secret': os.getenv("GOOGLE_CLIENT_SECRET"),
@@ -106,6 +106,8 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
+
+SOCIALACCOUNT_ADAPTER = 'applifireApp.adapters.MySocialAccountAdapter'
 
 LOGIN_REDIRECT_URL = '/?logged_in=true'
 LOGOUT_REDIRECT_URL = '/'
